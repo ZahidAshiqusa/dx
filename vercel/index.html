@@ -120,17 +120,17 @@
         <button onclick="selectTabAndClose('overview')" id="nav-btn-overview" class="drawer-nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all bg-obsidian-850 text-emerald-400 border border-obsidian-750">
           <div class="flex items-center gap-3">
             <i data-lucide="layout-dashboard" class="w-4 h-4 text-emerald-400"></i>
-            <span>Overview & Health</span>
+            <span>Overview & Dashboard</span>
           </div>
           <span class="text-[10px] font-mono text-neutral-500">Live</span>
         </button>
 
-        <button onclick="selectTabAndClose('pairing')" id="nav-btn-pairing" class="drawer-nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-neutral-300 hover:text-white hover:bg-obsidian-900 border border-transparent">
+        <button onclick="selectTabAndClose('session')" id="nav-btn-session" class="drawer-nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-neutral-300 hover:text-white hover:bg-obsidian-900 border border-transparent">
           <div class="flex items-center gap-3">
-            <i data-lucide="smartphone" class="w-4 h-4 text-emerald-400"></i>
-            <span>WhatsApp Linking</span>
+            <i data-lucide="key" class="w-4 h-4 text-emerald-400"></i>
+            <span>WhatsApp Session ID</span>
           </div>
-          <span class="text-[10px] font-mono text-neutral-500">Pair/QR</span>
+          <span class="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">Direct ID</span>
         </button>
 
         <button onclick="selectTabAndClose('online-tracer')" id="nav-btn-online-tracer" class="drawer-nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-neutral-300 hover:text-white hover:bg-obsidian-900 border border-transparent">
@@ -203,12 +203,12 @@
           <span class="text-[10px] font-mono text-neutral-400">118 Cmds</span>
         </button>
 
-        <button onclick="selectTabAndClose('backends')" id="nav-btn-backends" class="drawer-nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-neutral-300 hover:text-white hover:bg-obsidian-900 border border-transparent">
+        <button onclick="selectTabAndClose('render')" id="nav-btn-render" class="drawer-nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-neutral-300 hover:text-white hover:bg-obsidian-900 border border-transparent">
           <div class="flex items-center gap-3">
-            <i data-lucide="cloud" class="w-4 h-4 text-emerald-400"></i>
-            <span>Multi-Cloud Endpoints</span>
+            <i data-lucide="server" class="w-4 h-4 text-cyan-400"></i>
+            <span>Render Backend Hub</span>
           </div>
-          <span class="text-[10px] font-mono text-neutral-500">4 Clouds</span>
+          <span class="text-[10px] font-mono text-cyan-400">PORT 10000</span>
         </button>
 
         <button onclick="selectTabAndClose('broadcast')" id="nav-btn-broadcast" class="drawer-nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-neutral-300 hover:text-white hover:bg-obsidian-900 border border-transparent">
@@ -298,43 +298,43 @@
   <!-- ========================================================================= -->
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
-    <!-- Active Backend Notice Banner -->
+    <!-- Active Backend Notice Banner (Render Backend) -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl bg-obsidian-900 border border-obsidian-800">
       <div class="flex items-center gap-3">
-        <div id="backend-icon-container" class="w-9 h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+        <div id="backend-icon-container" class="w-9 h-9 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 shrink-0">
           <i data-lucide="server" id="backend-platform-icon" class="w-4 h-4"></i>
         </div>
         <div class="text-xs">
           <div class="flex flex-wrap items-center gap-2 text-neutral-400">
-            <span>Active WhatsApp Backend</span>
+            <span>Render WhatsApp Backend</span>
             <span aria-hidden="true">·</span>
-            <span id="backend-platform-tag" class="px-2 py-0.5 rounded text-[11px] font-mono font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20">Auto-Detecting...</span>
+            <span id="backend-platform-tag" class="px-2 py-0.5 rounded text-[11px] font-mono font-semibold text-cyan-400 bg-cyan-500/10 border border-cyan-500/20">Render (PORT 10000)</span>
             <span aria-hidden="true">·</span>
             <span id="backend-latency" class="font-mono tabular-nums text-neutral-300">-- ms</span>
           </div>
           <div id="current-backend-url" class="font-mono text-white font-medium mt-0.5 truncate max-w-xs sm:max-w-md md:max-w-xl">
-            Detecting active backend service...
+            Connecting to Render Web Service...
           </div>
         </div>
       </div>
 
       <div class="flex items-center gap-2 shrink-0">
         <button
-          onclick="autoDetectActiveBackend(true)"
-          id="btn-auto-detect-header"
-          title="Scan and auto-lock onto active Render, Railway, or Heroku backend"
+          onclick="pingRenderBackend(true)"
+          id="btn-ping-header"
+          title="Ping Render backend health and keep service awake"
           class="px-3 py-1.5 text-xs font-medium text-neutral-300 hover:text-white bg-obsidian-850 hover:bg-obsidian-800 border border-obsidian-750 rounded-lg transition-colors flex items-center gap-1.5"
         >
-          <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-emerald-400"></i>
-          <span>Auto-Detect</span>
+          <i data-lucide="activity" class="w-3.5 h-3.5 text-cyan-400"></i>
+          <span>Ping Health</span>
         </button>
 
         <button
-          onclick="selectTabAndClose('backends')"
+          onclick="selectTabAndClose('render')"
           class="px-3 py-1.5 text-xs font-medium text-neutral-300 hover:text-white bg-obsidian-850 hover:bg-obsidian-800 border border-obsidian-750 rounded-lg transition-colors flex items-center gap-1.5"
         >
-          <i data-lucide="cloud" class="w-3.5 h-3.5 text-cyan-400"></i>
-          <span>Clouds</span>
+          <i data-lucide="settings" class="w-3.5 h-3.5 text-cyan-400"></i>
+          <span>Render Hub</span>
         </button>
 
         <button
@@ -352,15 +352,15 @@
       <div class="flex items-center gap-3">
         <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-400 shrink-0"></i>
         <div>
-          <span class="font-bold text-white">No WhatsApp Backend Connected:</span>
-          <span id="backend-offline-msg" class="text-amber-300 ml-1">Make sure your Render, Railway, or Heroku backend is running.</span>
+          <span class="font-bold text-white">Render Backend Offline or Asleep:</span>
+          <span id="backend-offline-msg" class="text-amber-300 ml-1">Render free tier may take 20-30s to spin up. Enter your Render service URL below.</span>
         </div>
       </div>
       <div class="flex items-center gap-2 w-full md:w-auto">
         <input
           type="url"
           id="quick-backend-input"
-          placeholder="https://your-bot.onrender.com"
+          placeholder="https://your-bot-service.onrender.com"
           class="px-2.5 py-1 text-xs rounded bg-obsidian-950 border border-obsidian-750 text-white font-mono focus:outline-none focus:border-amber-400 w-full md:w-64"
         />
         <button
@@ -370,10 +370,10 @@
           Connect
         </button>
         <button
-          onclick="autoDetectActiveBackend(true)"
+          onclick="pingRenderBackend(true)"
           class="px-3 py-1 text-xs font-medium text-white bg-obsidian-850 hover:bg-obsidian-800 border border-obsidian-750 rounded transition-colors whitespace-nowrap"
         >
-          Scan
+          Wake Up
         </button>
       </div>
     </div>
@@ -383,6 +383,133 @@
     <!-- ======================================================================= -->
     <section id="tab-overview" class="tab-content space-y-6">
       
+      <!-- ===================================================================== -->
+      <!-- HERO WHATSAPP SESSION ID CONNECTION HUB (NO QR · NO PAIRING CODE)     -->
+      <!-- ===================================================================== -->
+      <div id="hero-session-card" class="p-6 rounded-2xl bg-gradient-to-b from-obsidian-900 to-obsidian-950 border border-obsidian-750 shadow-xl space-y-5">
+        
+        <!-- Hero Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-obsidian-800">
+          <div class="flex items-center gap-3">
+            <div id="hero-status-icon-bg" class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+              <i data-lucide="key" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 class="text-base font-bold text-white tracking-tight">WhatsApp Session Activation</h2>
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20">
+                  Pure Session ID
+                </span>
+              </div>
+              <p class="text-xs text-neutral-400 mt-0.5">
+                Direct Baileys session restoration on Render backend. Zero QR scan, zero phone pairing code.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 shrink-0">
+            <span id="hero-connection-badge" class="px-3 py-1.5 rounded-lg text-xs font-mono font-semibold bg-obsidian-850 text-neutral-400 border border-obsidian-750 flex items-center gap-2">
+              <span id="hero-connection-dot" class="w-2 h-2 rounded-full bg-rose-500"></span>
+              <span id="hero-connection-text">Disconnected</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Disconnected State: Session ID Input Form -->
+        <div id="hero-disconnected-view" class="space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div class="md:col-span-2 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <label for="hero-session-input" class="block text-xs font-mono font-medium text-neutral-300">
+                  WhatsApp Session ID String *
+                </label>
+                <button
+                  type="button"
+                  onclick="pasteSessionIdFromClipboard()"
+                  class="text-[11px] font-mono text-emerald-400 hover:text-emerald-300 flex items-center gap-1"
+                >
+                  <i data-lucide="clipboard" class="w-3 h-3"></i>
+                  <span>Paste From Clipboard</span>
+                </button>
+              </div>
+              <textarea
+                id="hero-session-input"
+                rows="3"
+                placeholder="Paste your exported WhatsApp Session ID here (e.g. ZAID~... or Base64 JSON)..."
+                class="w-full px-4 py-2.5 rounded-xl bg-obsidian-950 border border-obsidian-750 text-white font-mono text-xs focus:outline-none focus:border-emerald-500 transition-colors"
+              ></textarea>
+            </div>
+
+            <div class="space-y-3 flex flex-col justify-between">
+              <div>
+                <label for="hero-email-input" class="block text-xs font-mono font-medium text-neutral-300 mb-1.5">
+                  Client Gmail / Identifier
+                </label>
+                <input
+                  type="email"
+                  id="hero-email-input"
+                  placeholder="e.g. client@gmail.com"
+                  class="w-full px-3.5 py-2.5 rounded-xl bg-obsidian-950 border border-obsidian-750 text-white font-mono text-xs focus:outline-none focus:border-emerald-500 transition-colors"
+                />
+              </div>
+
+              <button
+                type="button"
+                id="btn-hero-connect"
+                onclick="submitHeroSession(event)"
+                class="w-full py-3 px-4 text-xs font-semibold text-obsidian-950 bg-emerald-400 hover:bg-emerald-300 rounded-xl transition-all shadow-lg shadow-emerald-500/10 flex items-center justify-center gap-2"
+              >
+                <i data-lucide="play" class="w-4 h-4"></i>
+                <span>Connect & Run WhatsApp Bot</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="text-[11px] text-neutral-500 flex flex-wrap items-center justify-between gap-2 pt-1">
+            <span>✨ Session is parsed in-memory on Render and stored securely. Does not require Vercel env changes.</span>
+            <span class="font-mono text-emerald-400">Render Port: 10000</span>
+          </div>
+        </div>
+
+        <!-- Connected State: Live Active WhatsApp Bot Card -->
+        <div id="hero-connected-view" class="hidden p-5 rounded-xl bg-obsidian-950/80 border border-emerald-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div class="flex items-center gap-3.5">
+            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
+              <i data-lucide="check-circle-2" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <div class="text-xs text-neutral-400 font-mono">Linked WhatsApp Account:</div>
+              <div id="hero-active-jid" class="text-xl font-bold font-mono text-emerald-400 tracking-wide mt-0.5">
+                +92 300 0000000
+              </div>
+              <div class="text-[11px] text-neutral-500 mt-1 flex items-center gap-3">
+                <span id="hero-active-email" class="text-neutral-400">Default Session</span>
+                <span aria-hidden="true">·</span>
+                <span id="hero-connected-pkt">Time: Live PKT</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2 shrink-0">
+            <button
+              onclick="showSessionSwitchPrompt()"
+              class="px-3.5 py-2 text-xs font-semibold text-neutral-300 hover:text-white bg-obsidian-850 hover:bg-obsidian-800 border border-obsidian-750 rounded-lg transition-colors flex items-center gap-1.5"
+            >
+              <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+              <span>Switch Session</span>
+            </button>
+            <button
+              onclick="resetWhatsAppSession()"
+              class="px-3.5 py-2 text-xs font-semibold text-rose-400 hover:text-white bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 rounded-lg transition-colors flex items-center gap-1.5"
+            >
+              <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+              <span>Disconnect</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
       <!-- Metrics Strip -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div class="p-5 rounded-xl bg-obsidian-900 border border-obsidian-800">
@@ -508,241 +635,156 @@
     </section>
 
     <!-- ======================================================================= -->
-    <!-- TAB 2: WHATSAPP PAIRING & SESSIONS                                      -->
+    <!-- TAB 2: WHATSAPP SESSION ID HUB (NO QR · NO PAIRING CODE)                -->
     <!-- ======================================================================= -->
-    <section id="tab-pairing" class="tab-content hidden space-y-6">
+    <section id="tab-session" class="tab-content hidden space-y-6">
       
       <div class="p-6 rounded-xl bg-obsidian-900 border border-obsidian-800">
-        <h2 class="text-xl font-bold text-white tracking-tight mb-2">WhatsApp Device Linking</h2>
+        <div class="flex items-center gap-2 mb-2">
+          <span class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold tracking-wide uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            Direct Authentication
+          </span>
+          <span class="text-xs text-neutral-400">Vercel UI + Render Persistent Backend</span>
+        </div>
+        <h2 class="text-xl font-bold text-white tracking-tight mb-1">WhatsApp Session Management</h2>
         <p class="text-sm text-neutral-400 leading-relaxed max-w-3xl">
-          WhatsApp Multi-Device authentication uses Baileys socket protocol. You can link using an 8-digit Pairing Code directly to your phone number, or scan the QR Code. Once linked, the session credentials are kept safe in your persistent backend container.
+          Connect your WhatsApp bot immediately by pasting your exported Session ID. No QR code camera scanning or 8-digit pairing codes required. The session credentials are authenticated and restored directly into the Baileys daemon on Render.
         </p>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        
-        <!-- Pairing Code Generator -->
-        <div class="p-6 rounded-xl bg-obsidian-900 border border-obsidian-800 flex flex-col justify-between">
+      <!-- Main Session Binding & Hub Card -->
+      <div class="p-6 rounded-xl bg-obsidian-900 border border-obsidian-800 space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-obsidian-800">
           <div>
-            <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2">
               <h3 class="text-base font-bold text-white flex items-center gap-2">
-                <i data-lucide="hash" class="w-4 h-4 text-emerald-400"></i>
-                <span>Generate 8-Digit Pairing Code</span>
+                <i data-lucide="key" class="w-4 h-4 text-emerald-400"></i>
+                <span>Direct Session ID Binding</span>
               </h3>
-              <span class="text-[11px] font-mono text-emerald-400">Recommended</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-semibold">
+                Instant Activation
+              </span>
             </div>
-
-            <p class="text-xs text-neutral-400 mb-6">
-              Apna WhatsApp phone number country code ke sath darj karein (bina '+' ya '-' ke, maslan: <code class="text-emerald-400">923001234567</code>):
+            <p class="text-xs text-neutral-400 mt-1">
+              Enter your WhatsApp Session ID string. You can also label it with your Gmail for multi-client tracking and GitHub Secret Gist logging.
             </p>
-
-            <form id="pairing-code-form" onsubmit="generatePairCode(event)" class="space-y-4">
-              <div>
-                <label for="pairing-phone" class="block text-xs font-medium text-neutral-300 mb-1.5">
-                  WhatsApp Phone Number (with Country Code)
-                </label>
-                <div class="relative">
-                  <input
-                    type="text"
-                    id="pairing-phone"
-                    placeholder="e.g. 923001234567"
-                    required
-                    class="w-full px-4 py-2.5 rounded-lg bg-obsidian-950 border border-obsidian-750 text-white font-mono text-sm placeholder:text-neutral-600 focus:outline-none focus:border-emerald-500"
-                  />
-                  <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-neutral-500 text-xs font-mono">
-                    digits only
-                  </div>
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                id="btn-generate-pair"
-                class="w-full py-2.5 px-4 text-xs font-semibold text-obsidian-950 bg-emerald-400 hover:bg-emerald-300 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm shadow-emerald-500/20"
-              >
-                <i data-lucide="key" class="w-4 h-4"></i>
-                <span>Generate Pairing Code</span>
-              </button>
-            </form>
-
-            <div id="pair-result-container" class="mt-6 p-5 rounded-xl bg-obsidian-950 border border-obsidian-800 text-center hidden">
-              <div class="text-xs font-mono text-neutral-400 mb-2">Aapka WhatsApp Pairing Code:</div>
-              <div id="pair-code-display" class="text-3xl font-mono font-bold text-emerald-400 tracking-widest my-3 select-all">
-                ---- ----
-              </div>
-              <button onclick="copyPairCode()" class="px-4 py-2 text-xs font-semibold text-white bg-obsidian-850 hover:bg-obsidian-800 border border-obsidian-700 rounded-lg transition-colors inline-flex items-center gap-1.5">
-                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-                <span id="btn-copy-label">Copy Code</span>
-              </button>
-            </div>
+          </div>
+          <div id="active-client-pill" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-obsidian-950 border border-obsidian-800 text-xs font-mono shrink-0">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            <span id="active-client-label" class="text-neutral-300">Active: Default Session</span>
           </div>
         </div>
 
-        <!-- QR Code Scanner -->
-        <div class="p-6 rounded-xl bg-obsidian-900 border border-obsidian-800 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between mb-4">
-              <h3 class="text-base font-bold text-white flex items-center gap-2">
-                <i data-lucide="qr-code" class="w-4 h-4 text-emerald-400"></i>
-                <span>Direct QR Code Scanner</span>
-              </h3>
-              <button onclick="fetchQrCode()" class="text-xs text-emerald-400 hover:text-emerald-300 flex items-center gap-1">
-                <i data-lucide="refresh-cw" class="w-3 h-3"></i>
-                <span>Reload QR</span>
-              </button>
-            </div>
-
-            <p class="text-xs text-neutral-400 mb-6">
-              Agar aap kisi dosray mobile phone ke camera se QR scan karna chahte hain toh neechay wala QR code WhatsApp Linked Devices se scan karein:
-            </p>
-
-            <div class="flex flex-col items-center justify-center p-6 rounded-xl bg-obsidian-950 border border-obsidian-800 min-h-[260px]">
-              <div id="qr-loading" class="flex flex-col items-center gap-3 text-neutral-400">
-                <i data-lucide="loader-2" class="w-8 h-8 animate-spin text-emerald-400"></i>
-                <span class="text-xs font-mono">Fetching active QR from backend...</span>
-              </div>
-
-              <div id="qr-container" class="hidden flex flex-col items-center">
-                <div class="p-3 bg-white rounded-xl shadow-lg">
-                  <img id="qr-image" src="" alt="WhatsApp QR Code" class="w-52 h-52 object-contain" />
-                </div>
-                <div class="mt-3 text-xs font-mono text-neutral-400 flex items-center gap-1.5">
-                  <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                  <span>Live QR · Auto-refreshes every 20s</span>
-                </div>
-              </div>
-
-              <div id="qr-empty" class="hidden flex flex-col items-center text-center p-4">
-                <i data-lucide="check-circle-2" class="w-10 h-10 text-emerald-400 mb-2"></i>
-                <div class="text-sm font-semibold text-white">Bot Is Already Connected!</div>
-                <p class="text-xs text-neutral-400 mt-1 max-w-xs">Aapka WhatsApp pehle se linked hai. Naye session ke liye backend restart karein.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Per-Client Gmail & WhatsApp Session ID Hub -->
-        <div class="col-span-1 lg:col-span-2 p-6 rounded-xl bg-obsidian-900 border border-obsidian-800 space-y-6">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-obsidian-800">
+        <!-- Session Input Form -->
+        <form onsubmit="submitClientSession(event)" class="space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <div class="flex items-center gap-2">
-                <h3 class="text-base font-bold text-white flex items-center gap-2">
-                  <i data-lucide="mail" class="w-4 h-4 text-emerald-400"></i>
-                  <span>Per-Client Gmail & WhatsApp Session ID Hub</span>
-                </h3>
-                <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-semibold">
-                  Multi-User Ready
-                </span>
-              </div>
-              <p class="text-xs text-neutral-400 mt-1">
-                Har user ya client apna Gmail darj kar ke apni alag Session ID connect kar sakta hai. Backend isay GitHub Secret Gist par log karta hai aur foran run karta hai (Vercel ke env mein session ID rakhne ki zaroorat nahi).
-              </p>
-            </div>
-            <div id="active-client-pill" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-obsidian-950 border border-obsidian-800 text-xs font-mono">
-              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-              <span id="active-client-label" class="text-neutral-300">Active: Default Session</span>
-            </div>
-          </div>
-
-          <!-- Session Input Form -->
-          <form onsubmit="submitClientSession(event)" class="space-y-4">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label for="client-session-email" class="block text-xs font-medium text-neutral-300 mb-1.5">
-                  Client Gmail / Email Address *
-                </label>
-                <div class="relative">
-                  <input
-                    type="email"
-                    id="client-session-email"
-                    placeholder="client@gmail.com"
-                    required
-                    class="w-full pl-9 pr-4 py-2.5 rounded-lg bg-obsidian-950 border border-obsidian-750 text-white font-mono text-xs focus:outline-none focus:border-emerald-500"
-                  />
-                  <i data-lucide="mail" class="w-4 h-4 text-neutral-500 absolute left-3 top-3"></i>
-                </div>
-              </div>
-
-              <div>
-                <label for="client-session-name" class="block text-xs font-medium text-neutral-300 mb-1.5">
-                  Client Name / Identifier (Optional)
-                </label>
-                <div class="relative">
-                  <input
-                    type="text"
-                    id="client-session-name"
-                    placeholder="e.g. Zahid Ashiq, Ali Store"
-                    class="w-full pl-9 pr-4 py-2.5 rounded-lg bg-obsidian-950 border border-obsidian-750 text-white text-xs focus:outline-none focus:border-emerald-500"
-                  />
-                  <i data-lucide="user" class="w-4 h-4 text-neutral-500 absolute left-3 top-3"></i>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <label for="client-session-id" class="block text-xs font-medium text-neutral-300 mb-1.5">
-                WhatsApp Session ID String (e.g. ZAID~... or Base64 creds) *
+              <label for="client-session-email" class="block text-xs font-medium text-neutral-300 mb-1.5">
+                Client Gmail / Account Email *
               </label>
-              <textarea
-                id="client-session-id"
-                rows="3"
-                required
-                placeholder="Paste client's WhatsApp SESSION_ID here..."
-                class="w-full px-4 py-2.5 rounded-lg bg-obsidian-950 border border-obsidian-750 text-white font-mono text-xs focus:outline-none focus:border-emerald-500"
-              ></textarea>
-              <div class="text-[11px] text-neutral-500 mt-1 flex items-center justify-between">
-                <span>Directly binds to this Gmail. Will be logged to GitHub Gist and run on backend.</span>
-                <span class="font-mono text-emerald-400">Zero Vercel Env Required</span>
+              <div class="relative">
+                <input
+                  type="email"
+                  id="client-session-email"
+                  placeholder="client@gmail.com"
+                  required
+                  class="w-full pl-9 pr-4 py-2.5 rounded-lg bg-obsidian-950 border border-obsidian-750 text-white font-mono text-xs focus:outline-none focus:border-emerald-500 transition-colors"
+                />
+                <i data-lucide="mail" class="w-4 h-4 text-neutral-500 absolute left-3 top-3"></i>
               </div>
             </div>
 
-            <div class="flex flex-col sm:flex-row items-center gap-3 pt-2">
-              <button
-                type="submit"
-                id="btn-client-session-submit"
-                class="w-full sm:w-auto px-6 py-2.5 text-xs font-semibold text-obsidian-950 bg-emerald-400 hover:bg-emerald-300 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm shadow-emerald-500/20"
-              >
-                <i data-lucide="play" class="w-4 h-4"></i>
-                <span>Bind & Run WhatsApp Session</span>
-              </button>
+            <div>
+              <label for="client-session-name" class="block text-xs font-medium text-neutral-300 mb-1.5">
+                Account Label / Owner Name (Optional)
+              </label>
+              <div class="relative">
+                <input
+                  type="text"
+                  id="client-session-name"
+                  placeholder="e.g. Zahid Ashiq, Primary Bot"
+                  class="w-full pl-9 pr-4 py-2.5 rounded-lg bg-obsidian-950 border border-obsidian-750 text-white text-xs focus:outline-none focus:border-emerald-500 transition-colors"
+                />
+                <i data-lucide="user" class="w-4 h-4 text-neutral-500 absolute left-3 top-3"></i>
+              </div>
+            </div>
+          </div>
 
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label for="client-session-id" class="block text-xs font-medium text-neutral-300">
+                WhatsApp Session ID String (e.g. ZAID~... or Base64 JSON) *
+              </label>
               <button
                 type="button"
-                onclick="syncSessionToGitHub()"
-                class="w-full sm:w-auto px-4 py-2.5 text-xs font-semibold text-neutral-300 hover:text-white bg-obsidian-850 hover:bg-obsidian-800 border border-obsidian-700 rounded-lg transition-colors flex items-center justify-center gap-1.5"
+                onclick="pasteSessionIdToMainTab()"
+                class="text-[11px] font-mono text-emerald-400 hover:text-emerald-300 flex items-center gap-1"
               >
-                <i data-lucide="github" class="w-4 h-4 text-purple-400"></i>
-                <span>Log / Backup To GitHub Gist</span>
+                <i data-lucide="clipboard" class="w-3 h-3"></i>
+                <span>Paste From Clipboard</span>
               </button>
             </div>
-          </form>
-
-          <div id="github-log-status" class="hidden p-3 rounded-lg bg-purple-500/10 border border-purple-500/20 text-xs font-mono text-purple-300 flex items-center justify-between">
-            <span id="github-log-text">Logged to GitHub</span>
-            <a id="github-log-link" href="#" target="_blank" class="text-emerald-400 hover:underline flex items-center gap-1">
-              <span>View Gist</span>
-              <i data-lucide="external-link" class="w-3 h-3"></i>
-            </a>
-          </div>
-
-          <!-- Stored Client Sessions List -->
-          <div class="pt-4 border-t border-obsidian-800">
-            <div class="flex items-center justify-between mb-3">
-              <h4 class="text-xs font-bold uppercase tracking-wider text-neutral-400 font-mono">
-                Registered Client Gmail Sessions
-              </h4>
-              <button onclick="fetchClientSessions()" class="text-xs text-emerald-400 hover:text-emerald-300 flex items-center gap-1">
-                <i data-lucide="refresh-cw" class="w-3 h-3"></i>
-                <span>Refresh Accounts</span>
-              </button>
-            </div>
-
-            <div id="client-sessions-list" class="space-y-2">
-              <div class="p-4 text-center text-xs text-neutral-500">Loading registered client sessions...</div>
+            <textarea
+              id="client-session-id"
+              rows="4"
+              required
+              placeholder="Paste your exported WhatsApp Session ID credentials here (Format: ZAID~... or Base64 creds)..."
+              class="w-full px-4 py-2.5 rounded-lg bg-obsidian-950 border border-obsidian-750 text-white font-mono text-xs focus:outline-none focus:border-emerald-500 transition-colors"
+            ></textarea>
+            <div class="text-[11px] text-neutral-500 mt-1 flex flex-wrap items-center justify-between gap-2">
+              <span>Directly binds to this account, restarts Baileys in-memory, and restores presence tracking.</span>
+              <span class="font-mono text-emerald-400">Zero Vercel Env Configuration Required</span>
             </div>
           </div>
+
+          <div class="flex flex-col sm:flex-row items-center gap-3 pt-2">
+            <button
+              type="submit"
+              id="btn-client-session-submit"
+              class="w-full sm:w-auto px-6 py-2.5 text-xs font-semibold text-obsidian-950 bg-emerald-400 hover:bg-emerald-300 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm shadow-emerald-500/20"
+            >
+              <i data-lucide="play" class="w-4 h-4"></i>
+              <span>Bind & Run WhatsApp Session</span>
+            </button>
+
+            <button
+              type="button"
+              onclick="syncSessionToGitHub()"
+              class="w-full sm:w-auto px-4 py-2.5 text-xs font-semibold text-neutral-300 hover:text-white bg-obsidian-850 hover:bg-obsidian-800 border border-obsidian-700 rounded-lg transition-colors flex items-center justify-center gap-1.5"
+            >
+              <i data-lucide="github" class="w-4 h-4 text-purple-400"></i>
+              <span>Log / Backup To GitHub Gist</span>
+            </button>
+          </div>
+        </form>
+
+        <div id="github-log-status" class="hidden p-3 rounded-lg bg-purple-500/10 border border-purple-500/20 text-xs font-mono text-purple-300 flex items-center justify-between">
+          <span id="github-log-text">Logged to GitHub</span>
+          <a id="github-log-link" href="#" target="_blank" class="text-emerald-400 hover:underline flex items-center gap-1">
+            <span>View Gist</span>
+            <i data-lucide="external-link" class="w-3 h-3"></i>
+          </a>
         </div>
 
+        <!-- Stored Client Sessions List -->
+        <div class="pt-4 border-t border-obsidian-800">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <h4 class="text-xs font-bold uppercase tracking-wider text-neutral-400 font-mono">
+                Registered Client WhatsApp Sessions
+              </h4>
+              <p class="text-[11px] text-neutral-500 mt-0.5">Switch between different WhatsApp bot accounts with 1 click.</p>
+            </div>
+            <button onclick="fetchClientSessions()" class="text-xs text-emerald-400 hover:text-emerald-300 flex items-center gap-1">
+              <i data-lucide="refresh-cw" class="w-3 h-3"></i>
+              <span>Refresh Accounts</span>
+            </button>
+          </div>
+
+          <div id="client-sessions-list" class="space-y-2">
+            <div class="p-4 text-center text-xs text-neutral-500">Loading registered client sessions...</div>
+          </div>
+        </div>
       </div>
 
     </section>
@@ -1316,250 +1358,128 @@
     <!-- ======================================================================= -->
     <!-- TAB 10: MULTI-CLOUD DEPLOYMENT ENDPOINTS                                -->
     <!-- ======================================================================= -->
+    <!-- TAB 10: RENDER BACKEND SERVICE HUB                                      -->
     <!-- ======================================================================= -->
-    <!-- TAB 10: MULTI-CLOUD DEPLOYMENT ENDPOINTS & AUTO-DETECTION HUB           -->
-    <!-- ======================================================================= -->
-    <section id="tab-backends" class="tab-content hidden space-y-6">
+    <section id="tab-render" class="tab-content hidden space-y-6">
       
-      <!-- Hub Header & Auto-Detect Banner -->
+      <!-- Render Hub Header -->
       <div class="p-6 rounded-xl bg-obsidian-900 border border-obsidian-800 space-y-4">
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div>
             <div class="flex items-center gap-2 mb-1">
-              <span class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold tracking-wide uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                Architectural Parity
+              <span class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold tracking-wide uppercase bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                Render Dedicated Backend
               </span>
-              <span class="text-xs text-neutral-400">Vercel (UI Only) + Render / Railway / Heroku (Backend Sockets)</span>
+              <span class="text-xs text-neutral-400">Vercel (Frontend UI) + Render (Baileys Daemon)</span>
             </div>
-            <h2 class="text-xl font-bold text-white tracking-tight">Multi-Cloud Backend Discovery & Control Hub</h2>
+            <h2 class="text-xl font-bold text-white tracking-tight">Render Web Service Configuration</h2>
             <p class="text-xs text-neutral-400 mt-1 max-w-3xl leading-relaxed">
-              Vercel hosts the responsive dashboard UI. WhatsApp's real-time Baileys socket runs on Render, Railway, or Heroku.
-              The system automatically probes all configured backends in parallel and locks onto the first active, healthy service.
+              Your WhatsApp bot runs continuously inside Render's persistent Node.js runtime on <strong>PORT 10000</strong>.
+              Enter your live Render URL below to route all events, presence tracking, and commands directly.
             </p>
           </div>
 
-          <!-- Master Auto-Detect Trigger -->
           <div class="flex flex-wrap items-center gap-3 shrink-0">
             <button
-              onclick="autoDetectActiveBackend(true)"
-              id="btn-auto-detect-tab"
-              class="px-4 py-2.5 text-xs font-semibold text-obsidian-950 bg-emerald-400 hover:bg-emerald-300 rounded-xl transition-all shadow-lg shadow-emerald-500/10 flex items-center gap-2"
+              onclick="pingRenderBackend(true)"
+              id="btn-render-ping"
+              class="px-4 py-2.5 text-xs font-semibold text-obsidian-950 bg-cyan-400 hover:bg-cyan-300 rounded-xl transition-all shadow-lg shadow-cyan-500/10 flex items-center gap-2"
             >
-              <i data-lucide="zap" class="w-4 h-4"></i>
-              <span>Auto-Detect & Connect Best Backend</span>
-            </button>
-
-            <button
-              onclick="toggleAutoFailover()"
-              id="btn-failover-toggle"
-              class="px-3.5 py-2.5 text-xs font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 rounded-xl transition-colors flex items-center gap-2"
-            >
-              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span id="failover-label">Auto-Failover: Enabled</span>
+              <i data-lucide="activity" class="w-4 h-4"></i>
+              <span>Test Render Health & Keep Alive</span>
             </button>
           </div>
         </div>
 
-        <!-- Current Active Live Route -->
-        <div class="p-3.5 rounded-lg bg-obsidian-950 border border-obsidian-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+        <!-- Render Live Route Card -->
+        <div class="p-4 rounded-lg bg-obsidian-950 border border-obsidian-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
           <div class="flex items-center gap-2.5">
-            <span class="text-neutral-400">Current Linked Backend:</span>
-            <span id="hub-active-platform" class="px-2 py-0.5 rounded text-[11px] font-mono font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-              Auto
-            </span>
-            <code id="hub-active-url" class="text-white font-mono font-medium">Detecting...</code>
+            <span class="text-neutral-400">Target Render URL:</span>
+            <code id="render-target-display" class="text-white font-mono font-medium">Detecting...</code>
           </div>
           <div class="flex items-center gap-3 text-neutral-400 font-mono text-[11px]">
-            <span>Latency: <strong id="hub-latency" class="text-emerald-400">-- ms</strong></span>
-            <span>Uptime: <strong id="hub-uptime" class="text-white">--</strong></span>
+            <span>Latency: <strong id="render-latency-display" class="text-cyan-400">-- ms</strong></span>
+            <span>Uptime: <strong id="render-uptime-display" class="text-white">--</strong></span>
           </div>
         </div>
       </div>
 
-      <!-- 4 Platform Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        
-        <!-- Platform 1: Render -->
-        <div id="card-backend-render" class="p-6 rounded-xl bg-obsidian-900 border border-obsidian-800 flex flex-col justify-between transition-all">
+      <!-- Render Service Configuration Card -->
+      <div class="p-6 rounded-xl bg-obsidian-900 border border-obsidian-800 space-y-6 max-w-3xl">
+        <div class="flex items-center gap-3 pb-4 border-b border-obsidian-800">
+          <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 font-bold font-mono text-sm">
+            RD
+          </div>
           <div>
-            <div class="flex items-center justify-between mb-3">
-              <div class="flex items-center gap-2.5">
-                <div class="w-9 h-9 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 font-bold font-mono text-xs">
-                  RD
-                </div>
-                <div>
-                  <div class="flex items-center gap-2">
-                    <h3 class="text-sm font-bold text-white">Render Cloud</h3>
-                    <span id="active-badge-render" class="hidden px-2 py-0.5 text-[10px] font-mono font-bold text-cyan-400 bg-cyan-500/10 border border-cyan-500/30 rounded">ACTIVE</span>
-                  </div>
-                  <div class="text-[11px] text-neutral-400">Folder: <code class="text-cyan-300">render/</code> · PORT 10000</div>
-                </div>
-              </div>
-              <span id="ping-badge-render" class="text-xs font-mono text-neutral-500">Unprobed</span>
-            </div>
+            <h3 class="text-base font-bold text-white">Render Public Service URL</h3>
+            <p class="text-xs text-neutral-400 mt-0.5">Deploy folder: <code class="text-cyan-300 font-mono">render/</code> with blueprint <code class="text-neutral-300 font-mono">render.yaml</code></p>
+          </div>
+        </div>
 
-            <p class="text-xs text-neutral-400 mb-4 leading-relaxed">
-              Native Web Service with <code class="text-cyan-300">render.yaml</code> blueprint. Keeps alive with zero-downtime health checking at <code class="text-neutral-300">/api/health</code>.
-            </p>
-
-            <div class="space-y-1.5">
-              <label class="block text-xs font-mono text-neutral-400">Render Public Service URL</label>
+        <form onsubmit="handleRenderUrlSave(event)" class="space-y-4">
+          <div>
+            <label for="url-render" class="block text-xs font-mono font-medium text-neutral-300 mb-1.5">
+              Render Onrender HTTPS URL *
+            </label>
+            <div class="relative">
               <input
                 type="url"
                 id="url-render"
                 placeholder="https://your-bot-service.onrender.com"
-                class="w-full px-3 py-2 rounded-lg bg-obsidian-950 border border-obsidian-750 text-white font-mono text-xs focus:outline-none focus:border-cyan-500"
+                required
+                class="w-full pl-9 pr-4 py-2.5 rounded-lg bg-obsidian-950 border border-obsidian-750 text-white font-mono text-xs focus:outline-none focus:border-cyan-500 transition-colors"
               />
+              <i data-lucide="globe" class="w-4 h-4 text-neutral-500 absolute left-3 top-3"></i>
+            </div>
+            <div class="text-[11px] text-neutral-500 mt-1 flex items-center justify-between">
+              <span>Automatically saved to browser storage. Vercel frontend communicates with this URL.</span>
+              <span id="ping-badge-render" class="font-mono text-cyan-400">Ready</span>
             </div>
           </div>
 
-          <div class="mt-6 pt-4 border-t border-obsidian-800 flex items-center justify-between gap-2">
-            <button onclick="pingPlatform('render')" class="px-3 py-1.5 text-xs font-medium text-neutral-300 hover:text-white bg-obsidian-850 hover:bg-obsidian-800 border border-obsidian-750 rounded-lg transition-colors flex items-center gap-1.5">
+          <div class="flex flex-wrap items-center gap-3 pt-2">
+            <button
+              type="submit"
+              id="btn-save-render-url"
+              class="px-5 py-2.5 text-xs font-semibold text-obsidian-950 bg-cyan-400 hover:bg-cyan-300 rounded-lg transition-colors flex items-center gap-2"
+            >
+              <i data-lucide="check" class="w-4 h-4"></i>
+              <span>Save & Connect Render Backend</span>
+            </button>
+            <button
+              type="button"
+              onclick="pingRenderBackend(true)"
+              class="px-4 py-2.5 text-xs font-medium text-neutral-300 hover:text-white bg-obsidian-850 hover:bg-obsidian-800 border border-obsidian-750 rounded-lg transition-colors flex items-center gap-1.5"
+            >
               <i data-lucide="activity" class="w-3.5 h-3.5 text-cyan-400"></i>
-              <span>Ping Health</span>
-            </button>
-            <button onclick="setActiveBackend('render')" class="px-3.5 py-1.5 text-xs font-semibold text-white bg-cyan-600 hover:bg-cyan-500 rounded-lg transition-colors flex items-center gap-1.5">
-              <i data-lucide="check" class="w-3.5 h-3.5"></i>
-              <span>Use Render Active</span>
+              <span>Ping / Wake Service</span>
             </button>
           </div>
-        </div>
+        </form>
 
-        <!-- Platform 2: Railway -->
-        <div id="card-backend-railway" class="p-6 rounded-xl bg-obsidian-900 border border-obsidian-800 flex flex-col justify-between transition-all">
-          <div>
-            <div class="flex items-center justify-between mb-3">
-              <div class="flex items-center gap-2.5">
-                <div class="w-9 h-9 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 font-bold font-mono text-xs">
-                  RW
-                </div>
-                <div>
-                  <div class="flex items-center gap-2">
-                    <h3 class="text-sm font-bold text-white">Railway Cloud</h3>
-                    <span id="active-badge-railway" class="hidden px-2 py-0.5 text-[10px] font-mono font-bold text-purple-400 bg-purple-500/10 border border-purple-500/30 rounded">ACTIVE</span>
-                  </div>
-                  <div class="text-[11px] text-neutral-400">Folder: <code class="text-purple-300">railway/</code> · PORT 8080</div>
-                </div>
-              </div>
-              <span id="ping-badge-railway" class="text-xs font-mono text-neutral-500">Unprobed</span>
-            </div>
-
-            <p class="text-xs text-neutral-400 mb-4 leading-relaxed">
-              Continuous WebSocket daemon with zero-config auto-deploy. Native persistent socket stability on custom domains.
-            </p>
-
-            <div class="space-y-1.5">
-              <label class="block text-xs font-mono text-neutral-400">Railway Public Service URL</label>
-              <input
-                type="url"
-                id="url-railway"
-                placeholder="https://your-bot-production.up.railway.app"
-                class="w-full px-3 py-2 rounded-lg bg-obsidian-950 border border-obsidian-750 text-white font-mono text-xs focus:outline-none focus:border-purple-500"
-              />
-            </div>
+        <!-- Render Deployment Specs Box -->
+        <div class="p-4 rounded-xl bg-obsidian-950 border border-obsidian-800 space-y-2.5 text-xs">
+          <div class="font-bold text-white flex items-center gap-2">
+            <i data-lucide="info" class="w-4 h-4 text-cyan-400"></i>
+            <span>Render Deployment Blueprint (`render/render.yaml`)</span>
           </div>
-
-          <div class="mt-6 pt-4 border-t border-obsidian-800 flex items-center justify-between gap-2">
-            <button onclick="pingPlatform('railway')" class="px-3 py-1.5 text-xs font-medium text-neutral-300 hover:text-white bg-obsidian-850 hover:bg-obsidian-800 border border-obsidian-750 rounded-lg transition-colors flex items-center gap-1.5">
-              <i data-lucide="activity" class="w-3.5 h-3.5 text-purple-400"></i>
-              <span>Ping Health</span>
-            </button>
-            <button onclick="setActiveBackend('railway')" class="px-3.5 py-1.5 text-xs font-semibold text-white bg-purple-600 hover:bg-purple-500 rounded-lg transition-colors flex items-center gap-1.5">
-              <i data-lucide="check" class="w-3.5 h-3.5"></i>
-              <span>Use Railway Active</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Platform 3: Heroku -->
-        <div id="card-backend-heroku" class="p-6 rounded-xl bg-obsidian-900 border border-obsidian-800 flex flex-col justify-between transition-all">
-          <div>
-            <div class="flex items-center justify-between mb-3">
-              <div class="flex items-center gap-2.5">
-                <div class="w-9 h-9 rounded-lg bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 font-bold font-mono text-xs">
-                  HK
-                </div>
-                <div>
-                  <div class="flex items-center gap-2">
-                    <h3 class="text-sm font-bold text-white">Heroku Cloud</h3>
-                    <span id="active-badge-heroku" class="hidden px-2 py-0.5 text-[10px] font-mono font-bold text-rose-400 bg-rose-500/10 border border-rose-500/30 rounded">ACTIVE</span>
-                  </div>
-                  <div class="text-[11px] text-neutral-400">Folder: <code class="text-rose-300">heroku/</code> · Dynamic Dyno PORT</div>
-                </div>
-              </div>
-              <span id="ping-badge-heroku" class="text-xs font-mono text-neutral-500">Unprobed</span>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 font-mono text-[11px] pt-1">
+            <div class="p-2 rounded bg-obsidian-900 border border-obsidian-800">
+              <span class="text-neutral-500 block">Root Dir:</span>
+              <span class="text-white">render</span>
             </div>
-
-            <p class="text-xs text-neutral-400 mb-4 leading-relaxed">
-              Standard Heroku Dyno configured via <code class="text-rose-300">Procfile</code> (<code class="text-neutral-300">web: node server.js</code>) and automatic environment injection.
-            </p>
-
-            <div class="space-y-1.5">
-              <label class="block text-xs font-mono text-neutral-400">Heroku App URL</label>
-              <input
-                type="url"
-                id="url-heroku"
-                placeholder="https://your-bot-name.herokuapp.com"
-                class="w-full px-3 py-2 rounded-lg bg-obsidian-950 border border-obsidian-750 text-white font-mono text-xs focus:outline-none focus:border-rose-500"
-              />
+            <div class="p-2 rounded bg-obsidian-900 border border-obsidian-800">
+              <span class="text-neutral-500 block">Port:</span>
+              <span class="text-cyan-400 font-bold">10000</span>
             </div>
-          </div>
-
-          <div class="mt-6 pt-4 border-t border-obsidian-800 flex items-center justify-between gap-2">
-            <button onclick="pingPlatform('heroku')" class="px-3 py-1.5 text-xs font-medium text-neutral-300 hover:text-white bg-obsidian-850 hover:bg-obsidian-800 border border-obsidian-750 rounded-lg transition-colors flex items-center gap-1.5">
-              <i data-lucide="activity" class="w-3.5 h-3.5 text-rose-400"></i>
-              <span>Ping Health</span>
-            </button>
-            <button onclick="setActiveBackend('heroku')" class="px-3.5 py-1.5 text-xs font-semibold text-white bg-rose-600 hover:bg-rose-500 rounded-lg transition-colors flex items-center gap-1.5">
-              <i data-lucide="check" class="w-3.5 h-3.5"></i>
-              <span>Use Heroku Active</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Platform 4: Custom VPS / Local Server -->
-        <div id="card-backend-custom" class="p-6 rounded-xl bg-obsidian-900 border border-obsidian-800 flex flex-col justify-between transition-all">
-          <div>
-            <div class="flex items-center justify-between mb-3">
-              <div class="flex items-center gap-2.5">
-                <div class="w-9 h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold font-mono text-xs">
-                  VPS
-                </div>
-                <div>
-                  <div class="flex items-center gap-2">
-                    <h3 class="text-sm font-bold text-white">Custom / Local Dev</h3>
-                    <span id="active-badge-custom" class="hidden px-2 py-0.5 text-[10px] font-mono font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 rounded">ACTIVE</span>
-                  </div>
-                  <div class="text-[11px] text-neutral-400">Root: <code class="text-emerald-300">server.js</code> · PORT 3000</div>
-                </div>
-              </div>
-              <span id="ping-badge-custom" class="text-xs font-mono text-neutral-500">Unprobed</span>
+            <div class="p-2 rounded bg-obsidian-900 border border-obsidian-800">
+              <span class="text-neutral-500 block">Build:</span>
+              <span class="text-white">npm install</span>
             </div>
-
-            <p class="text-xs text-neutral-400 mb-4 leading-relaxed">
-              Direct connection to a self-hosted VPS, Docker container, or local development server listening on port 3000.
-            </p>
-
-            <div class="space-y-1.5">
-              <label class="block text-xs font-mono text-neutral-400">Custom Server Base URL</label>
-              <input
-                type="url"
-                id="url-custom"
-                placeholder="http://localhost:3000"
-                class="w-full px-3 py-2 rounded-lg bg-obsidian-950 border border-obsidian-750 text-white font-mono text-xs focus:outline-none focus:border-emerald-500"
-              />
+            <div class="p-2 rounded bg-obsidian-900 border border-obsidian-800">
+              <span class="text-neutral-500 block">Start:</span>
+              <span class="text-white">node server.js</span>
             </div>
-          </div>
-
-          <div class="mt-6 pt-4 border-t border-obsidian-800 flex items-center justify-between gap-2">
-            <button onclick="pingPlatform('custom')" class="px-3 py-1.5 text-xs font-medium text-neutral-300 hover:text-white bg-obsidian-850 hover:bg-obsidian-800 border border-obsidian-750 rounded-lg transition-colors flex items-center gap-1.5">
-              <i data-lucide="activity" class="w-3.5 h-3.5 text-emerald-400"></i>
-              <span>Ping Health</span>
-            </button>
-            <button onclick="setActiveBackend('custom')" class="px-3.5 py-1.5 text-xs font-semibold text-obsidian-950 bg-emerald-400 hover:bg-emerald-300 rounded-lg transition-colors flex items-center gap-1.5">
-              <i data-lucide="check" class="w-3.5 h-3.5"></i>
-              <span>Use Custom Active</span>
-            </button>
           </div>
         </div>
 
@@ -1679,18 +1599,18 @@
       startPakistanClock();
       renderDynamicButtonInputs();
       renderCommands();
-      loadStoredUrls();
+      loadRenderBackendUrl();
       
-      // Auto-detect and connect to the active backend (Render / Railway / Heroku / Local)
-      autoDetectActiveBackend(false);
+      // Auto-connect to Render backend service
+      initRenderBackendConnection();
 
       // Periodic background syncs
       setInterval(fetchTracerData, 5000);
       setInterval(fetchDeletedMessages, 8000);
       setInterval(fetchClientSessions, 10000);
 
-      // Continuous Health Check & Automated Failover Heartbeat (every 10 seconds)
-      setInterval(runBackendHeartbeat, 10000);
+      // Continuous Health Check & Render Heartbeat (every 10 seconds to prevent cold sleep)
+      setInterval(runRenderHeartbeat, 10000);
     });
 
     // ─── Pakistan Standard Time Digital Clock (PKT / Asia/Karachi UTC+5) ────
@@ -1758,9 +1678,11 @@
       if (tabId === 'online-tracer') fetchTracerData();
       if (tabId === 'antidelete') fetchDeletedMessages();
       if (tabId === 'status-saver') fetchStatusStories();
-      if (tabId === 'pairing') {
-        fetchQrCode();
+      if (tabId === 'session') {
         fetchClientSessions();
+      }
+      if (tabId === 'render') {
+        pingRenderBackend(false);
       }
 
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1783,28 +1705,11 @@
 
     // ─── Backend Synchronization & Health Checks ──────────────────────────
     async function refreshBackendData() {
-      const latencyElem = document.getElementById('backend-latency');
-      const start = performance.now();
-
-      try {
-        const res = await fetch(`${activeBackendUrl}/api/health`, { cache: 'no-store' });
-        const latency = Math.round(performance.now() - start);
-        latencyElem.innerText = `${latency} ms`;
-
-        if (res.ok) {
-          const data = await res.json();
-          updateConnectionStatus(data.connectionStatus, data.botJid);
-          document.getElementById('backend-platform-tag').innerText = data.platform || 'Online';
-          if (data.uptime) {
-            document.getElementById('stat-uptime').innerText = data.uptime;
-          }
-        } else {
-          updateConnectionStatus('error');
-        }
-      } catch (err) {
-        latencyElem.innerText = '-- ms';
-        updateConnectionStatus('disconnected');
-      }
+      await pingRenderBackend(true);
+      fetchTracerData();
+      fetchDeletedMessages();
+      fetchClientSessions();
+      fetchStatusStories();
     }
 
     function updateConnectionStatus(status, jid = null) {
@@ -1814,6 +1719,14 @@
       const statJid = document.getElementById('stat-bot-jid');
       const drawerStatus = document.getElementById('drawer-socket-status');
 
+      // Hero Session Card elements
+      const heroConnDot = document.getElementById('hero-connection-dot');
+      const heroConnText = document.getElementById('hero-connection-text');
+      const heroConnBadge = document.getElementById('hero-connection-badge');
+      const heroConnView = document.getElementById('hero-connected-view');
+      const heroDisconnView = document.getElementById('hero-disconnected-view');
+      const heroActiveJid = document.getElementById('hero-active-jid');
+
       if (status === 'connected') {
         dot.className = 'w-2 h-2 rounded-full bg-emerald-400';
         text.innerText = 'Connected';
@@ -1822,14 +1735,24 @@
         statConn.className = 'text-xl font-bold font-mono text-emerald-400 truncate';
         drawerStatus.innerText = 'Connected';
         drawerStatus.className = 'text-emerald-400 font-semibold';
+
+        if (heroConnDot) heroConnDot.className = 'w-2 h-2 rounded-full bg-emerald-400 animate-pulse';
+        if (heroConnText) heroConnText.innerText = 'Active Session';
+        if (heroConnBadge) heroConnBadge.className = 'px-3 py-1.5 rounded-lg text-xs font-mono font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center gap-2';
+        if (heroConnView) heroConnView.classList.remove('hidden');
+        if (heroDisconnView) heroDisconnView.classList.add('hidden');
       } else if (status === 'awaiting_scan') {
         dot.className = 'w-2 h-2 rounded-full bg-amber-400 animate-pulse';
-        text.innerText = 'Awaiting Link';
+        text.innerText = 'Awaiting Session';
         text.className = 'text-amber-400 font-semibold';
-        statConn.innerText = 'Awaiting QR / Pair';
+        statConn.innerText = 'Awaiting Session ID';
         statConn.className = 'text-xl font-bold font-mono text-amber-400 truncate';
-        drawerStatus.innerText = 'Awaiting Scan';
+        drawerStatus.innerText = 'Awaiting Session';
         drawerStatus.className = 'text-amber-400';
+
+        if (heroConnDot) heroConnDot.className = 'w-2 h-2 rounded-full bg-amber-400 animate-pulse';
+        if (heroConnText) heroConnText.innerText = 'Awaiting Session';
+        if (heroConnBadge) heroConnBadge.className = 'px-3 py-1.5 rounded-lg text-xs font-mono font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/30 flex items-center gap-2';
       } else {
         dot.className = 'w-2 h-2 rounded-full bg-rose-500';
         text.innerText = 'Disconnected';
@@ -1838,13 +1761,18 @@
         statConn.className = 'text-xl font-bold font-mono text-white truncate';
         drawerStatus.innerText = 'Disconnected';
         drawerStatus.className = 'text-neutral-500';
+
+        if (heroConnDot) heroConnDot.className = 'w-2 h-2 rounded-full bg-rose-500';
+        if (heroConnText) heroConnText.innerText = 'Disconnected';
+        if (heroConnBadge) heroConnBadge.className = 'px-3 py-1.5 rounded-lg text-xs font-mono font-semibold bg-obsidian-850 text-neutral-400 border border-obsidian-750 flex items-center gap-2';
       }
 
       if (jid) {
         const cleanDigits = jid.split('@')[0].replace(/[^0-9]/g, '');
         statJid.innerText = `+${cleanDigits}`;
+        if (heroActiveJid) heroActiveJid.innerText = `+${cleanDigits}`;
       } else if (status !== 'connected') {
-        statJid.innerText = 'Not Paired';
+        statJid.innerText = 'No Session Bound';
       }
     }
 
@@ -2465,94 +2393,133 @@
       }
     }
 
-    // ─── WhatsApp Pairing Code Generator ──────────────────────────────────
-    async function generatePairCode(e) {
-      e.preventDefault();
-      const phoneInput = document.getElementById('pairing-phone').value.trim();
-      const cleanPhone = phoneInput.replace(/[^0-9]/g, '');
+    // ─── WhatsApp Session ID Hero & Activation Functions ──────────────────
+    async function submitHeroSession(e) {
+      if (e) e.preventDefault();
+      const sessionInput = document.getElementById('hero-session-input');
+      const emailInput = document.getElementById('hero-email-input');
+      const btn = document.getElementById('btn-hero-connect');
 
-      if (!cleanPhone || cleanPhone.length < 9) {
-        showToast('Please enter a valid phone number with country code');
+      const sessionId = sessionInput ? sessionInput.value.trim() : '';
+      const email = emailInput ? emailInput.value.trim() : '';
+
+      if (!sessionId) {
+        showToast('Please paste your WhatsApp Session ID string.');
+        if (sessionInput) sessionInput.focus();
         return;
       }
 
-      const btn = document.getElementById('btn-generate-pair');
-      const originalText = btn.innerHTML;
-      btn.innerHTML = `<span class="animate-pulse">Generating code...</span>`;
-      btn.disabled = true;
-
-      try {
-        const res = await fetch(`${activeBackendUrl}/api/pair`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ phone: cleanPhone })
-        });
-        const data = await res.json();
-
-        if (data.success && (data.pairingCode || data.code)) {
-          const rawCode = data.pairingCode || data.code;
-          const codeFormatted = rawCode.length === 8 ? `${rawCode.slice(0, 4)} - ${rawCode.slice(4)}` : rawCode;
-          document.getElementById('pair-code-display').innerText = codeFormatted;
-          document.getElementById('pair-result-container').classList.remove('hidden');
-          showToast('Pairing code generated! Enter it in WhatsApp.');
-        } else {
-          showToast(data.error || data.message || 'Error generating pair code. Ensure backend is running.');
-        }
-      } catch (err) {
-        showToast('Failed to reach backend server.');
-      } finally {
-        btn.innerHTML = originalText;
-        btn.disabled = false;
+      const origText = btn ? btn.innerHTML : '';
+      if (btn) {
+        btn.innerHTML = '<span class="animate-pulse flex items-center gap-2"><i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>Restoring WhatsApp Session...</span></span>';
+        btn.disabled = true;
         lucide.createIcons();
       }
-    }
-
-    function copyPairCode() {
-      const text = document.getElementById('pair-code-display').innerText.replace(/\s|-/g, '');
-      navigator.clipboard.writeText(text);
-      document.getElementById('btn-copy-label').innerText = 'Copied!';
-      showToast('Pairing code copied to clipboard!');
-      setTimeout(() => {
-        document.getElementById('btn-copy-label').innerText = 'Copy Code';
-      }, 2000);
-    }
-
-    // QR Code Fetcher
-    async function fetchQrCode() {
-      const qrLoading = document.getElementById('qr-loading');
-      const qrContainer = document.getElementById('qr-container');
-      const qrEmpty = document.getElementById('qr-empty');
-      const qrImage = document.getElementById('qr-image');
 
       try {
-        const res = await fetch(`${activeBackendUrl}/api/state`, { cache: 'no-store' });
-        const data = await res.json();
+        const res = await fetch(`${activeBackendUrl}/api/session`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            sessionId,
+            email: email || 'user@zaidashiq.studio',
+            name: email ? email.split('@')[0] : 'Primary Account'
+          })
+        });
 
-        qrLoading.classList.add('hidden');
-        if (data.qr) {
-          qrImage.src = data.qr;
-          qrContainer.classList.remove('hidden');
-          qrEmpty.classList.add('hidden');
-        } else if (data.status === 'connected') {
-          qrEmpty.classList.remove('hidden');
-          qrContainer.classList.add('hidden');
+        const data = await res.json().catch(() => ({}));
+
+        if (data.success) {
+          showToast('WhatsApp Session connected & restored successfully!');
+          if (sessionInput) sessionInput.value = '';
+
+          // Transition Hero view
+          const heroActiveEmail = document.getElementById('hero-active-email');
+          if (heroActiveEmail) heroActiveEmail.innerText = email || 'Default Account';
+
+          updateConnectionStatus('connected', data.botJid || null);
+          fetchClientSessions();
+          setTimeout(pingRenderBackend, 1200);
         } else {
-          qrLoading.classList.remove('hidden');
-          qrLoading.innerHTML = `<span class="text-xs text-neutral-400">QR generating... please wait or generate 8-digit Pair Code.</span>`;
+          showToast(data.error || 'Failed to restore Session ID. Check string format.');
         }
       } catch (err) {
-        qrLoading.innerHTML = `<span class="text-xs text-rose-400">Unable to load QR from backend.</span>`;
+        console.error('[HERO-SESSION] Error:', err);
+        showToast('Communication error. Verify Render backend service is awake & running.');
+      } finally {
+        if (btn) {
+          btn.innerHTML = origText;
+          btn.disabled = false;
+          lucide.createIcons();
+        }
       }
+    }
+
+    async function pasteSessionIdFromClipboard() {
+      try {
+        if (navigator.clipboard && navigator.clipboard.readText) {
+          const text = await navigator.clipboard.readText();
+          if (text) {
+            const input = document.getElementById('hero-session-input');
+            if (input) {
+              input.value = text.trim();
+              showToast('Session ID pasted from clipboard!');
+              return;
+            }
+          }
+        }
+      } catch (_) {}
+      showToast('Clipboard access unavailable. Please paste manually into the field.');
+      const input = document.getElementById('hero-session-input');
+      if (input) input.focus();
+    }
+
+    async function pasteSessionIdToMainTab() {
+      try {
+        if (navigator.clipboard && navigator.clipboard.readText) {
+          const text = await navigator.clipboard.readText();
+          if (text) {
+            const input = document.getElementById('client-session-id');
+            if (input) {
+              input.value = text.trim();
+              showToast('Session ID pasted from clipboard!');
+              return;
+            }
+          }
+        }
+      } catch (_) {}
+      showToast('Clipboard access unavailable. Please paste manually into the field.');
+      const input = document.getElementById('client-session-id');
+      if (input) input.focus();
+    }
+
+    function showSessionSwitchPrompt() {
+      const heroConnView = document.getElementById('hero-connected-view');
+      const heroDisconnView = document.getElementById('hero-disconnected-view');
+      if (heroDisconnView) heroDisconnView.classList.remove('hidden');
+      if (heroConnView) heroConnView.classList.add('hidden');
+      const sessionInput = document.getElementById('hero-session-input');
+      if (sessionInput) {
+        sessionInput.focus();
+        sessionInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      showToast('Enter new WhatsApp Session ID to switch credentials.');
     }
 
     async function resetWhatsAppSession() {
-      if (!confirm('Are you sure you want to log out and clear the WhatsApp session?')) return;
+      if (!confirm('Are you sure you want to disconnect and clear the active WhatsApp session?')) return;
       try {
         const res = await fetch(`${activeBackendUrl}/api/logout`, { method: 'POST' });
-        const data = await res.json();
-        showToast(data.message || 'Session cleared');
-        setTimeout(refreshBackendData, 1500);
-      } catch (_) {}
+        const data = await res.json().catch(() => ({}));
+        showToast(data.message || 'Session disconnected');
+        updateConnectionStatus('disconnected');
+        showSessionSwitchPrompt();
+        setTimeout(pingRenderBackend, 1500);
+      } catch (_) {
+        showToast('Disconnected local state.');
+        updateConnectionStatus('disconnected');
+        showSessionSwitchPrompt();
+      }
     }
 
     // ─── Commands Directory ───────────────────────────────────────────────
@@ -2609,396 +2576,204 @@
       showToast(`Command ${cmdName} tested in sandbox.`);
     }
 
-    // ─── Multi-Cloud Endpoints & Automated Discovery Engine ─────────────
-    let isProbingBackends = false;
-    let autoFailoverEnabled = true;
-    let failedHealthCount = 0;
+    // ─── Render Backend Hub: Dedicated Persistent Node.js Service ────────
+    let isPingingRender = false;
+    let renderHeartbeatFailures = 0;
 
-    function loadStoredUrls() {
-      ['railway', 'render', 'heroku', 'custom'].forEach(platform => {
-        const stored = localStorage.getItem(`backend_url_${platform}`);
-        if (stored) {
-          const input = document.getElementById(`url-${platform}`);
-          if (input) input.value = stored;
+    async function loadRenderBackendUrl() {
+      // 1. Check local storage
+      const stored = localStorage.getItem('renderBackendUrl');
+      if (stored) {
+        activeBackendUrl = stored;
+        updateRenderUiUrl(stored);
+        return;
+      }
+
+      // 2. Query Vercel environment provider /api/env
+      try {
+        const envRes = await fetch('/api/env', { cache: 'no-store' });
+        if (envRes.ok) {
+          const envData = await envRes.json();
+          const candidate = envData?.backends?.render || envData?.backendUrl;
+          if (candidate && candidate.startsWith('http')) {
+            activeBackendUrl = candidate.trim().replace(/\/+$/, '');
+            updateRenderUiUrl(activeBackendUrl);
+            return;
+          }
         }
-      });
+      } catch (_) {}
+
+      // 3. Fallback: local development origin if running outside vercel.app
+      if (!window.location.hostname.includes('vercel.app')) {
+        activeBackendUrl = window.location.origin;
+        updateRenderUiUrl(activeBackendUrl);
+      }
     }
 
-    async function autoDetectActiveBackend(userInitiated = false) {
-      if (isProbingBackends) return;
-      isProbingBackends = true;
+    function updateRenderUiUrl(url) {
+      const renderInput = document.getElementById('url-render');
+      const renderTarget = document.getElementById('render-target-display');
+      const currentUrl = document.getElementById('current-backend-url');
+      const quickInput = document.getElementById('quick-backend-input');
 
-      const btnHeader = document.getElementById('btn-auto-detect-header');
-      const btnTab = document.getElementById('btn-auto-detect-tab');
-      const platformTag = document.getElementById('backend-platform-tag');
+      if (renderInput && !renderInput.value) renderInput.value = url;
+      if (renderTarget) renderTarget.innerText = url;
+      if (currentUrl) currentUrl.innerText = url;
+      if (quickInput && !quickInput.value) quickInput.value = url;
+    }
 
-      if (btnHeader) btnHeader.classList.add('animate-spin');
-      if (btnTab) btnTab.innerHTML = '<span class="animate-pulse">Scanning Backends...</span>';
-      if (platformTag && (!activeBackendUrl || activeBackendUrl === 'Detecting active backend service...')) {
-        platformTag.innerText = 'Scanning...';
+    async function initRenderBackendConnection() {
+      await loadRenderBackendUrl();
+      initSocket();
+      await pingRenderBackend(false);
+      fetchClientSessions();
+    }
+
+    async function pingRenderBackend(notify = false) {
+      if (isPingingRender) return;
+      isPingingRender = true;
+
+      const btnPing = document.getElementById('btn-ping-header');
+      const btnTabPing = document.getElementById('btn-render-ping');
+      const badge = document.getElementById('ping-badge-render');
+      const latencyDisplay = document.getElementById('render-latency-display');
+      const headerLatency = document.getElementById('backend-latency');
+      const uptimeDisplay = document.getElementById('render-uptime-display');
+      const offlineAlert = document.getElementById('backend-offline-alert');
+
+      if (btnPing) btnPing.classList.add('animate-pulse');
+      if (badge) {
+        badge.innerText = 'Pinging...';
+        badge.className = 'font-mono text-neutral-400 text-xs';
       }
+
+      const start = performance.now();
 
       try {
-        // 1. Query Vercel /api/env
-        let envBackends = {};
-        try {
-          const envRes = await fetch('/api/env', { cache: 'no-store' });
-          if (envRes.ok) {
-            const envData = await envRes.json();
-            if (envData.backends) {
-              envBackends = envData.backends;
-            } else if (envData.backendUrl) {
-              envBackends.custom = envData.backendUrl;
-            }
-          }
-        } catch (_) {}
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 6000);
 
-        // Populate inputs if currently blank
-        if (envBackends.render) {
-          const el = document.getElementById('url-render');
-          if (el && !el.value) el.value = envBackends.render;
-        }
-        if (envBackends.railway) {
-          const el = document.getElementById('url-railway');
-          if (el && !el.value) el.value = envBackends.railway;
-        }
-        if (envBackends.heroku) {
-          const el = document.getElementById('url-heroku');
-          if (el && !el.value) el.value = envBackends.heroku;
-        }
-        if (envBackends.custom) {
-          const el = document.getElementById('url-custom');
-          if (el && !el.value) el.value = envBackends.custom;
-        }
-
-        // 2. Build candidate pool
-        const candidates = [];
-        function addCandidate(id, name, url) {
-          if (!url || typeof url !== 'string') return;
-          const clean = url.trim().replace(/\/+$/, '');
-          if (!clean || !clean.startsWith('http')) return;
-          if (!candidates.some(c => c.url.toLowerCase() === clean.toLowerCase())) {
-            candidates.push({ id, name, url: clean });
-          }
-        }
-
-        if (envBackends.render) addCandidate('render', 'Render Cloud', envBackends.render);
-        if (envBackends.railway) addCandidate('railway', 'Railway Cloud', envBackends.railway);
-        if (envBackends.heroku) addCandidate('heroku', 'Heroku Cloud', envBackends.heroku);
-        if (envBackends.custom) addCandidate('custom', 'Custom Server', envBackends.custom);
-
-        addCandidate('render', 'Render Cloud', localStorage.getItem('backend_url_render'));
-        addCandidate('railway', 'Railway Cloud', localStorage.getItem('backend_url_railway'));
-        addCandidate('heroku', 'Heroku Cloud', localStorage.getItem('backend_url_heroku'));
-        addCandidate('custom', 'Custom Server', localStorage.getItem('backend_url_custom'));
-        addCandidate('last', 'Active Backend', localStorage.getItem('activeBackendUrl'));
-
-        ['render', 'railway', 'heroku', 'custom'].forEach(p => {
-          const inp = document.getElementById(`url-${p}`);
-          if (inp && inp.value) addCandidate(p, `${p.toUpperCase()} Service`, inp.value);
+        const res = await fetch(`${activeBackendUrl}/api/health`, {
+          method: 'GET',
+          cache: 'no-store',
+          signal: controller.signal
         });
+        clearTimeout(timeout);
 
-        // Add local origin if testing on non-vercel domain
-        if (!window.location.hostname.includes('vercel.app')) {
-          addCandidate('custom', 'Local Dev', window.location.origin);
-        }
+        const latency = Math.round(performance.now() - start);
 
-        if (candidates.length === 0) {
-          showOfflineAlert('No backend URLs configured. Please enter your Render, Railway, or Heroku service URL.');
-          return;
-        }
+        if (res.ok) {
+          const data = await res.json().catch(() => ({}));
+          renderHeartbeatFailures = 0;
 
-        // 3. Parallel probing with latency measurement
-        const probePromises = candidates.map(async (c) => {
-          const start = performance.now();
-          try {
-            const controller = new AbortController();
-            const timer = setTimeout(() => controller.abort(), 3500);
-            const res = await fetch(`${c.url}/api/health`, {
-              method: 'GET',
-              cache: 'no-store',
-              signal: controller.signal
-            });
-            clearTimeout(timer);
-            const latency = Math.round(performance.now() - start);
-            if (res.ok) {
-              const json = await res.json().catch(() => ({}));
-              return {
-                ...c,
-                online: true,
-                latency,
-                platform: json.platform || c.name,
-                connectionStatus: json.connectionStatus,
-                botJid: json.botJid,
-                uptime: json.uptime
-              };
-            }
-          } catch (_) {}
-          return { ...c, online: false, latency: 99999 };
-        });
-
-        const results = await Promise.all(probePromises);
-        const online = results.filter(r => r.online).sort((a, b) => a.latency - b.latency);
-
-        // Update Tab 10 ping badges
-        results.forEach(res => {
-          const badge = document.getElementById(`ping-badge-${res.id}`);
           if (badge) {
-            if (res.online) {
-              badge.innerText = `Online (${res.latency}ms)`;
-              badge.className = 'text-xs font-mono text-emerald-400 font-semibold';
-            } else {
-              badge.innerText = 'Offline';
-              badge.className = 'text-xs font-mono text-rose-400';
-            }
+            badge.innerText = `Online (${latency}ms)`;
+            badge.className = 'font-mono text-emerald-400 font-semibold text-xs';
           }
-        });
+          if (latencyDisplay) latencyDisplay.innerText = `${latency} ms`;
+          if (headerLatency) headerLatency.innerText = `${latency} ms`;
+          if (uptimeDisplay && data.uptime) uptimeDisplay.innerText = data.uptime;
+          if (offlineAlert) offlineAlert.classList.add('hidden');
 
-        if (online.length > 0) {
-          const best = online[0];
-          failedHealthCount = 0;
-          hideOfflineAlert();
-          applyActiveBackend(best.url, best.platform || best.name, best.latency, best.connectionStatus, best.botJid, best.uptime);
-          if (userInitiated) {
-            showToast(`Auto-detected active backend: ${best.platform || best.name} (${best.latency}ms)!`);
+          updateRenderUiUrl(activeBackendUrl);
+          updateConnectionStatus(data.connectionStatus, data.botJid);
+
+          if (notify) {
+            showToast(`Render backend online! Latency: ${latency}ms`);
           }
         } else {
-          updateConnectionStatus('disconnected');
-          showOfflineAlert('None of your configured backend services responded to health checks. Check your Render, Railway, or Heroku deployment.');
+          throw new Error(`HTTP ${res.status}`);
         }
       } catch (err) {
-        console.error('[AUTO-DETECT] Error:', err);
+        renderHeartbeatFailures++;
+        if (badge) {
+          badge.innerText = 'Asleep / Waking up';
+          badge.className = 'font-mono text-amber-400 text-xs';
+        }
+        if (latencyDisplay) latencyDisplay.innerText = 'Waking up...';
+        if (headerLatency) headerLatency.innerText = '-- ms';
+        if (offlineAlert) offlineAlert.classList.remove('hidden');
+
+        if (notify) {
+          showToast('Pinging Render backend... Free instances take 20-30s to wake up.');
+        }
       } finally {
-        isProbingBackends = false;
-        if (btnHeader) btnHeader.classList.remove('animate-spin');
-        if (btnTab) btnTab.innerHTML = '<i data-lucide="zap" class="w-4 h-4"></i><span>Auto-Detect & Connect Best Backend</span>';
-        lucide.createIcons();
+        isPingingRender = false;
+        if (btnPing) btnPing.classList.remove('animate-pulse');
       }
     }
 
-    function applyActiveBackend(url, platformName, latency, connectionStatus, botJid, uptime = null) {
-      const urlChanged = (activeBackendUrl !== url);
-      activeBackendUrl = url;
-      localStorage.setItem('activeBackendUrl', url);
+    async function handleRenderUrlSave(e) {
+      if (e) e.preventDefault();
+      const input = document.getElementById('url-render');
+      let val = input ? input.value.trim() : '';
 
-      updateBackendIndicators(platformName, url, latency, uptime);
-
-      // Tab 10 cards visual highlight
-      ['render', 'railway', 'heroku', 'custom'].forEach(p => {
-        const card = document.getElementById(`card-backend-${p}`);
-        const activeBadge = document.getElementById(`active-badge-${p}`);
-        const input = document.getElementById(`url-${p}`);
-        const isCurrent = input && input.value && url.includes(input.value.replace(/^https?:\/\//, '').replace(/\/+$/, ''));
-        if (card) {
-          if (isCurrent) {
-            card.classList.add('border-emerald-500/60', 'bg-emerald-950/10');
-          } else {
-            card.classList.remove('border-emerald-500/60', 'bg-emerald-950/10');
-          }
-        }
-        if (activeBadge) {
-          activeBadge.classList.toggle('hidden', !isCurrent);
-        }
-      });
-
-      if (connectionStatus) {
-        updateConnectionStatus(connectionStatus, botJid);
+      if (!val) {
+        showToast('Please enter your Render service URL');
+        return;
       }
 
-      // Re-initialize socket if URL changed or not currently connected
-      if (urlChanged || !socket || !socket.connected) {
-        initSocket();
+      if (!val.startsWith('http://') && !val.startsWith('https://')) {
+        val = `https://${val}`;
       }
+      val = val.replace(/\/+$/, '');
 
-      // Sync all live WhatsApp features from this active backend
-      fetchQrCode();
+      activeBackendUrl = val;
+      localStorage.setItem('renderBackendUrl', val);
+      updateRenderUiUrl(val);
+
+      showToast('Render URL saved! Connecting to service...');
+
+      // Re-init socket with new URL
+      initSocket();
+      await pingRenderBackend(true);
+
+      // Refresh all features from new backend
       fetchTracerData();
       fetchDeletedMessages();
       fetchClientSessions();
       fetchStatusStories();
     }
 
-    function updateBackendIndicators(platformName, url, latency, uptime) {
-      const urlElem = document.getElementById('current-backend-url');
-      const platformElem = document.getElementById('backend-platform-tag');
-      const latencyElem = document.getElementById('backend-latency');
-      const hubUrl = document.getElementById('hub-active-url');
-      const hubPlatform = document.getElementById('hub-active-platform');
-      const hubLatency = document.getElementById('hub-latency');
-      const hubUptime = document.getElementById('hub-uptime');
-
-      if (urlElem) urlElem.innerText = url;
-      if (hubUrl) hubUrl.innerText = url;
-
-      if (latency) {
-        if (latencyElem) latencyElem.innerText = `${latency} ms`;
-        if (hubLatency) hubLatency.innerText = `${latency} ms`;
+    function connectQuickBackend() {
+      const input = document.getElementById('quick-backend-input');
+      let val = input ? input.value.trim() : '';
+      if (!val) {
+        showToast('Please enter a Render service URL');
+        return;
       }
-
-      if (uptime) {
-        if (hubUptime) hubUptime.innerText = uptime;
-        const statUptime = document.getElementById('stat-uptime');
-        if (statUptime) statUptime.innerText = uptime;
+      if (!val.startsWith('http://') && !val.startsWith('https://')) {
+        val = `https://${val}`;
       }
+      val = val.replace(/\/+$/, '');
 
-      const pName = platformName || 'Connected';
-      if (platformElem) {
-        platformElem.innerText = pName;
-        const lower = pName.toLowerCase();
-        if (lower.includes('render')) {
-          platformElem.className = 'px-2 py-0.5 rounded text-[11px] font-mono font-semibold text-cyan-400 bg-cyan-500/10 border border-cyan-500/30';
-        } else if (lower.includes('railway')) {
-          platformElem.className = 'px-2 py-0.5 rounded text-[11px] font-mono font-semibold text-purple-400 bg-purple-500/10 border border-purple-500/30';
-        } else if (lower.includes('heroku')) {
-          platformElem.className = 'px-2 py-0.5 rounded text-[11px] font-mono font-semibold text-rose-400 bg-rose-500/10 border border-rose-500/30';
-        } else {
-          platformElem.className = 'px-2 py-0.5 rounded text-[11px] font-mono font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30';
-        }
-      }
-
-      if (hubPlatform) {
-        hubPlatform.innerText = pName;
-      }
+      const renderInput = document.getElementById('url-render');
+      if (renderInput) renderInput.value = val;
+      handleRenderUrlSave(null);
     }
 
-    async function runBackendHeartbeat() {
-      if (isProbingBackends || !activeBackendUrl) return;
-      const start = performance.now();
+    async function runRenderHeartbeat() {
+      if (isPingingRender || !activeBackendUrl) return;
       try {
         const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), 3500);
+        const timeout = setTimeout(() => controller.abort(), 4000);
         const res = await fetch(`${activeBackendUrl}/api/health`, {
           method: 'GET',
           cache: 'no-store',
           signal: controller.signal
         });
-        clearTimeout(timer);
+        clearTimeout(timeout);
         if (res.ok) {
-          failedHealthCount = 0;
-          const latency = Math.round(performance.now() - start);
           const data = await res.json().catch(() => ({}));
-          updateBackendIndicators(data.platform, activeBackendUrl, latency, data.uptime);
+          const headerLatency = document.getElementById('backend-latency');
+          const uptimeDisplay = document.getElementById('render-uptime-display');
+          const offlineAlert = document.getElementById('backend-offline-alert');
+
+          if (data.uptime && uptimeDisplay) uptimeDisplay.innerText = data.uptime;
+          if (offlineAlert) offlineAlert.classList.add('hidden');
           if (data.connectionStatus) updateConnectionStatus(data.connectionStatus, data.botJid);
-          hideOfflineAlert();
-        } else {
-          failedHealthCount++;
         }
-      } catch (err) {
-        failedHealthCount++;
-      }
-
-      if (failedHealthCount >= 2) {
-        updateConnectionStatus('disconnected');
-        if (autoFailoverEnabled) {
-          console.warn('[FAILOVER] Backend unreachable. Scanning for alive failover candidate...');
-          autoDetectActiveBackend(false);
-        } else {
-          showOfflineAlert('Active backend connection lost. Click Auto-Detect or switch backends.');
-        }
-      }
-    }
-
-    function toggleAutoFailover() {
-      autoFailoverEnabled = !autoFailoverEnabled;
-      const label = document.getElementById('failover-label');
-      const btn = document.getElementById('btn-failover-toggle');
-      if (autoFailoverEnabled) {
-        label.innerText = 'Auto-Failover: Enabled';
-        btn.className = 'px-3.5 py-2.5 text-xs font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 rounded-xl transition-colors flex items-center gap-2';
-        showToast('Auto-failover enabled: System will automatically switch to backup backend if one sleeps.');
-      } else {
-        label.innerText = 'Auto-Failover: Disabled';
-        btn.className = 'px-3.5 py-2.5 text-xs font-medium text-neutral-400 bg-obsidian-950 border border-obsidian-750 rounded-xl transition-colors flex items-center gap-2';
-        showToast('Auto-failover disabled.');
-      }
-    }
-
-    function connectQuickBackend() {
-      const inp = document.getElementById('quick-backend-input');
-      const url = inp ? inp.value.trim().replace(/\/+$/, '') : '';
-      if (!url || !url.startsWith('http')) {
-        showToast('Please enter a valid HTTP/HTTPS URL');
-        return;
-      }
-      showToast('Connecting to specified backend...');
-      applyActiveBackend(url, 'Custom Backend', null, null, null);
-      autoDetectActiveBackend(true);
-    }
-
-    function showOfflineAlert(msg) {
-      const alert = document.getElementById('backend-offline-alert');
-      const msgEl = document.getElementById('backend-offline-msg');
-      if (alert) alert.classList.remove('hidden');
-      if (msgEl && msg) msgEl.innerText = msg;
-    }
-
-    function hideOfflineAlert() {
-      const alert = document.getElementById('backend-offline-alert');
-      if (alert) alert.classList.add('hidden');
-    }
-
-    async function pingPlatform(platform) {
-      const input = document.getElementById(`url-${platform}`);
-      const badge = document.getElementById(`ping-badge-${platform}`);
-      const url = input ? input.value.trim().replace(/\/+$/, '') : '';
-
-      if (!url) {
-        if (badge) {
-          badge.innerText = 'No URL set';
-          badge.className = 'text-xs font-mono text-amber-400';
-        }
-        showToast(`Please enter a URL for ${platform.toUpperCase()} first.`);
-        return;
-      }
-
-      if (badge) {
-        badge.innerText = 'Pinging...';
-        badge.className = 'text-xs font-mono text-neutral-400';
-      }
-      const start = performance.now();
-
-      try {
-        const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), 4000);
-        const res = await fetch(`${url}/api/health`, { method: 'GET', cache: 'no-store', signal: controller.signal });
-        clearTimeout(timer);
-        const latency = Math.round(performance.now() - start);
-        if (res.ok) {
-          const data = await res.json().catch(() => ({}));
-          if (badge) {
-            badge.innerText = `Online (${latency}ms)`;
-            badge.className = 'text-xs font-mono text-emerald-400 font-semibold';
-          }
-          showToast(`${platform.toUpperCase()} is Online! Latency: ${latency}ms`);
-        } else {
-          if (badge) {
-            badge.innerText = `HTTP ${res.status}`;
-            badge.className = 'text-xs font-mono text-amber-400';
-          }
-          showToast(`${platform.toUpperCase()} returned HTTP ${res.status}`);
-        }
-      } catch (err) {
-        if (badge) {
-          badge.innerText = 'Unreachable';
-          badge.className = 'text-xs font-mono text-rose-400';
-        }
-        showToast(`${platform.toUpperCase()} is unreachable or asleep`);
-      }
-    }
-
-    async function setActiveBackend(platform) {
-      const input = document.getElementById(`url-${platform}`);
-      const url = input ? input.value.trim().replace(/\/+$/, '') : '';
-
-      if (!url) {
-        showToast(`Please enter a valid URL for ${platform.toUpperCase()} first.`);
-        return;
-      }
-
-      localStorage.setItem(`backend_url_${platform}`, url);
-      showToast(`Switching to ${platform.toUpperCase()} backend...`);
-      applyActiveBackend(url, platform.toUpperCase(), null, null, null);
-      await refreshBackendData();
+      } catch (_) {}
     }
 
     // ─── Broadcast Dispatcher ─────────────────────────────────────────────
@@ -3176,32 +2951,13 @@
         if (socket) {
           try { socket.disconnect(); } catch (_) {}
         }
+        if (!activeBackendUrl) return;
         socket = io(activeBackendUrl, { credentials: false, transports: ['websocket', 'polling'] });
         socket.on('connect', () => {
           updateConnectionStatus('connected');
         });
         socket.on('status', (data) => {
           updateConnectionStatus(data.status, data.botJid);
-        });
-        socket.on('qr', (dataUrl) => {
-          const qrLoading = document.getElementById('qr-loading');
-          const qrContainer = document.getElementById('qr-container');
-          const qrEmpty = document.getElementById('qr-empty');
-          const qrImage = document.getElementById('qr-image');
-          if (qrImage) qrImage.src = dataUrl;
-          if (qrLoading) qrLoading.classList.add('hidden');
-          if (qrEmpty) qrEmpty.classList.add('hidden');
-          if (qrContainer) qrContainer.classList.remove('hidden');
-        });
-        socket.on('pairing_code', (data) => {
-          if (data && data.code) {
-            const rawCode = data.code;
-            const codeFormatted = rawCode.length === 8 ? `${rawCode.slice(0, 4)} - ${rawCode.slice(4)}` : rawCode;
-            const disp = document.getElementById('pair-code-display');
-            const cont = document.getElementById('pair-result-container');
-            if (disp) disp.innerText = codeFormatted;
-            if (cont) cont.classList.remove('hidden');
-          }
         });
         socket.on('online_tracer_target_added', () => {
           fetchTracerData();
