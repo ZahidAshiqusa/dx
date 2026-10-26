@@ -46,13 +46,24 @@ function normalizeNumber(num) {
 
 function formatTime(dateObj = new Date()) {
   const d = dateObj instanceof Date ? dateObj : new Date(dateObj);
-  let hours = d.getHours();
-  const minutes = String(d.getMinutes()).padStart(2, '0');
-  const ampm = hours >= 12 ? 'pm' : 'am';
-  hours = hours % 12;
-  hours = hours ? hours : 12; // 0 becomes 12
-  const hoursStr = String(hours).padStart(2, '0');
-  return `${hoursStr}:${minutes} ${ampm}`;
+  try {
+    return new Intl.DateTimeFormat('en-PK', {
+      timeZone: 'Asia/Karachi',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true
+    }).format(d) + ' PKT';
+  } catch (_) {
+    const utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+    const pktDate = new Date(utc + (3600000 * 5));
+    let hours = pktDate.getHours();
+    const minutes = String(pktDate.getMinutes()).padStart(2, '0');
+    const seconds = String(pktDate.getSeconds()).padStart(2, '0');
+    const ampm = hours >= 12 ? 'pm' : 'am';
+    hours = hours % 12 || 12;
+    return `${String(hours).padStart(2, '0')}:${minutes}:${seconds} ${ampm} PKT`;
+  }
 }
 
 function formatDuration(ms) {

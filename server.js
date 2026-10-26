@@ -853,9 +853,9 @@ app.post('/api/logout', async (req, res) => {
 });
 
 // ─── Feature 2: Customized Interactive Button Message Sender ─────────────────
-app.post('/api/send-buttons', async (req, res) => {
+async function handleSendButtons(req, res) {
   try {
-    const { to, headerTitle, body, footer, buttons } = req.body;
+    const { to, headerTitle, body, footer, buttons, limit } = req.body;
 
     if (!sock || connectionStatus !== 'connected') {
       return res.status(400).json({ success: false, error: 'WhatsApp is not connected. Link via QR, Pairing code, or Session ID first.' });
@@ -868,14 +868,19 @@ app.post('/api/send-buttons', async (req, res) => {
     const cleanTo = to.replace(/[^0-9]/g, '');
     const targetJid = `${cleanTo}@s.whatsapp.net`;
 
+    const maxLimit = Math.min(Math.max(parseInt(limit, 10) || 5, 1), 5);
     const buttonList = Array.isArray(buttons) && buttons.length > 0 ? buttons : ['Confirm', 'Cancel'];
-    const formattedButtons = buttonList.slice(0, 5).map((btnText, idx) => ({
-      name: 'quick_reply',
-      buttonParamsJson: JSON.stringify({
-        display_text: String(btnText).trim(),
-        id: `btn_${idx + 1}_${Date.now()}`
-      })
-    }));
+    const formattedButtons = buttonList.slice(0, maxLimit).map((btn, idx) => {
+      const displayText = typeof btn === 'object' && btn.text ? String(btn.text).trim() : String(btn).trim();
+      const buttonId = typeof btn === 'object' && btn.id ? String(btn.id).trim() : `btn_${idx + 1}_${Date.now()}`;
+      return {
+        name: 'quick_reply',
+        buttonParamsJson: JSON.stringify({
+          display_text: displayText,
+          id: buttonId
+        })
+      };
+    });
 
     const interactiveMessage = proto.Message.InteractiveMessage.create({
       header: proto.Message.InteractiveMessage.Header.create({
@@ -912,13 +917,16 @@ app.post('/api/send-buttons', async (req, res) => {
       success: true,
       message: `Interactive message transmitted to +${cleanTo}`,
       buttonCount: formattedButtons.length,
+      buttons: formattedButtons.map(b => JSON.parse(b.buttonParamsJson).display_text),
       messageId: waMsg.key.id
     });
   } catch (err) {
     console.error('[BUTTONS] Transmission error:', err);
     res.status(500).json({ success: false, error: err.message });
   }
-});
+}
+app.post('/api/send-buttons', handleSendButtons);
+app.post('/api/send/button', handleSendButtons);
 
 // ─── Feature 4: Full-Resolution Uncropped Profile Picture (DP) Updater ────────
 app.post('/api/update-dp', async (req, res) => {
@@ -968,7 +976,7 @@ app.post('/api/update-dp', async (req, res) => {
 });
 
 // ─── Feature 5: Send Voice Note (PTT) ─────────────────────────────────────────
-app.post('/api/send-voice-note', async (req, res) => {
+async function handleSendVoiceNote(req, res) {
   try {
     const { to, audioBase64, mime } = req.body;
 
@@ -1024,10 +1032,12 @@ app.post('/api/send-voice-note', async (req, res) => {
     console.error('[VOICE-NOTE] Transmission error:', err);
     res.status(500).json({ success: false, error: err.message });
   }
-});
+}
+app.post('/api/send-voice-note', handleSendVoiceNote);
+app.post('/api/send/ptt', handleSendVoiceNote);
 
 // ─── Feature 6: Send Video Note (PTV) ─────────────────────────────────────────
-app.post('/api/send-video-note', async (req, res) => {
+async function handleSendVideoNote(req, res) {
   try {
     const { to, videoBase64, mime } = req.body;
 
@@ -1080,6 +1090,24 @@ app.post('/api/send-video-note', async (req, res) => {
     console.error('[VIDEO-NOTE] Transmission error:', err);
     res.status(500).json({ success: false, error: err.message });
   }
+}
+app.post('/api/send-video-note', handleSendVideoNote);
+app.post('/api/send/ptv', handleSendVideoNote);
+
+// ─── Status Stories List & Saver ──────────────────────────────────────────────
+app.get('/api/status/list', (req, res) => {
+  res.json({
+    success: true,
+    statuses: statusItems,
+    count: statusItems.length
+  });
+});
+app.get('/api/status-saver', (req, res) => {
+  res.json({
+    success: true,
+    statuses: statusItems,
+    count: statusItems.length
+  });
 });
 
 // ─── Feature 7: Online Tracer API ────────────────────────────────────────────
