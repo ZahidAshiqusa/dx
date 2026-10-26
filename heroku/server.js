@@ -651,8 +651,9 @@ app.get('/api/env', (req, res) => {
   });
 });
 
-// ─── Account Session Persistence (Strict Google 1-Time Binding) ──────────────
+// ─── Client Gmail Session Manager (Multi-User Per-Gmail Session ID Binding) ────────
 const ACCOUNT_SESSIONS_FILE = path.join(__dirname, 'data', 'account_sessions.json');
+let activeUserEmail = null;
 
 function loadAccountSessions() {
   try {
@@ -675,48 +676,55 @@ function saveAccountSessions(data) {
   }
 }
 
-// Check if a Google Account has already bound a Session ID
+// Get all registered client accounts and currently running session
+app.get('/api/account-sessions', (req, res) => {
+  const store = loadAccountSessions();
+  const accounts = Object.values(store).map(acc => ({
+    email: acc.email,
+    name: acc.name || acc.email,
+    boundAt: acc.boundAt,
+    isActive: acc.email === activeUserEmail || (!activeUserEmail && connectionStatus === 'connected'),
+    hasSession: !!acc.sessionId
+  }));
+  res.json({
+    success: true,
+    activeUserEmail,
+    accounts,
+    githubBackupConfigured: githubBackup.isConfigured()
+  });
+});
+
+// Check single account status
 app.get('/api/account-session-status', (req, res) => {
   const accountKey = req.query.sub || req.query.email;
   if (!accountKey) {
-    return res.status(400).json({ success: false, error: 'Google account sub/email is required' });
+    return res.status(400).json({ success: false, error: 'Client email is required' });
   }
   const store = loadAccountSessions();
-  const binding = store[accountKey] || null;
+  const binding = store[accountKey.toLowerCase()] || null;
   res.json({
     success: true,
     isBound: !!binding,
     binding: binding ? {
       email: binding.email,
       name: binding.name,
-      boundAt: binding.boundAt,
-      locked: true
+      boundAt: binding.boundAt
     } : null
   });
 });
 
-// ─── Session ID Connection Endpoint (Strict 1-Time Per Google Account) ───────
+// Register, bind and run a client's WhatsApp Session ID via Gmail with GitHub logging
 app.post('/api/session', async (req, res) => {
   try {
-    const { sessionId, googleUser } = req.body;
+    const { sessionId, email, name, googleUser } = req.body;
     if (!sessionId) {
-      return res.status(400).json({ success: false, error: 'Session ID string is required' });
+      return res.status(400).json({ success: false, error: 'Session ID string is required (e.g. ZAID~... or Base64 creds)' });
     }
 
-    const store = loadAccountSessions();
-    const accountKey = googleUser?.sub || googleUser?.email;
+    const clientEmail = (email || googleUser?.email || 'client@zaidashiq.studio').trim().toLowerCase();
+    const clientName = (name || googleUser?.name || clientEmail.split('@')[0]).trim();
 
-    // Strict 1-Time Session Rule: Check if this Google account already bound a session
-    if (accountKey && store[accountKey] && store[accountKey].locked) {
-      return res.status(403).json({
-        success: false,
-        error: `Security Lock: This Google account (${store[accountKey].email || accountKey}) has already bound a WhatsApp Session ID. Each Google account can only register a Session ID one time.`,
-        alreadyBound: true,
-        boundAt: store[accountKey].boundAt
-      });
-    }
-
-    console.log(`[SESSION] Applying Session ID for Google account: ${accountKey || 'operator'}...`);
+    console.log(`[SESSION] Applying & running custom Session ID for client: ${clientEmail}...`);
 
     if (sock) {
       try { sock.end(); } catch (_) {}
@@ -730,17 +738,31 @@ app.post('/api/session', async (req, res) => {
       });
     }
 
-    // Permanently record and lock this Session ID to the authenticated Google account
-    if (accountKey) {
-      store[accountKey] = {
-        sub: googleUser.sub || null,
-        email: googleUser.email || 'operator@zaidashiq.studio',
-        name: googleUser.name || 'Google User',
-        boundAt: new Date().toISOString(),
-        locked: true
-      };
-      saveAccountSessions(store);
-      console.log(`[SESSION] Successfully locked Session ID to Google Account: ${googleUser.email || accountKey}`);
+    // Save in client accounts store
+    const store = loadAccountSessions();
+    store[clientEmail] = {
+      email: clientEmail,
+      name: clientName,
+      sessionId,
+      boundAt: store[clientEmail]?.boundAt || new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    saveAccountSessions(store);
+    activeUserEmail = clientEmail;
+
+    // Automated logging to GitHub Secret Gist if configured
+    let githubResult = null;
+    if (githubBackup.isConfigured()) {
+      try {
+        githubResult = await githubBackup.backupSession(SESSION_DIR, {
+          userEmail: clientEmail,
+          userName: clientName,
+          triggeredBy: 'client_frontend_session_submission'
+        });
+        console.log(`[GitHubBackup] Successfully logged session to GitHub: ${githubResult.htmlUrl || githubResult.gistId}`);
+      } catch (ghErr) {
+        console.warn('[GitHubBackup] Session logging warning:', ghErr.message);
+      }
     }
 
     connectionStatus = 'awaiting_scan';
@@ -748,7 +770,7 @@ app.post('/api/session', async (req, res) => {
     pairingCodeCache = null;
 
     io.emit('status', { status: 'awaiting_scan', botJid: null });
-    io.emit('session_applied', { account: accountKey || null });
+    io.emit('session_applied', { email: clientEmail, name: clientName });
 
     setTimeout(() => {
       startWhatsApp();
@@ -756,11 +778,60 @@ app.post('/api/session', async (req, res) => {
 
     res.json({
       success: true,
-      message: 'Session ID successfully restored and locked to your Google account! WhatsApp socket is connecting...',
-      boundAccount: accountKey || null
+      message: `Session ID applied for ${clientEmail}! WhatsApp socket is running.`,
+      email: clientEmail,
+      name: clientName,
+      githubLog: githubResult ? {
+        gistId: githubResult.gistId,
+        url: githubResult.htmlUrl,
+        action: githubResult.action
+      } : null
     });
   } catch (err) {
     console.error('[SESSION] Error applying session ID:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Switch active running session to a previously saved client's session
+app.post('/api/account-sessions/switch', async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ success: false, error: 'Client email is required' });
+
+    const cleanEmail = email.trim().toLowerCase();
+    const store = loadAccountSessions();
+    const client = store[cleanEmail];
+
+    if (!client || !client.sessionId) {
+      return res.status(404).json({ success: false, error: `No stored session found for ${cleanEmail}` });
+    }
+
+    console.log(`[SESSION] Switching active WhatsApp socket to client: ${cleanEmail}...`);
+    if (sock) {
+      try { sock.end(); } catch (_) {}
+    }
+
+    const restored = restoreSession(client.sessionId, SESSION_DIR);
+    if (!restored) {
+      return res.status(400).json({ success: false, error: 'Failed to restore session credentials.' });
+    }
+
+    activeUserEmail = cleanEmail;
+    connectionStatus = 'awaiting_scan';
+    io.emit('status', { status: 'awaiting_scan', botJid: null });
+    io.emit('session_applied', { email: cleanEmail, name: client.name });
+
+    setTimeout(() => {
+      startWhatsApp();
+    }, 1200);
+
+    res.json({
+      success: true,
+      message: `Active WhatsApp socket switched to ${cleanEmail}`,
+      activeUserEmail: cleanEmail
+    });
+  } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
 });
