@@ -56,12 +56,20 @@ Yeh guide aapko batati hai ke aap apne WhatsApp Bot aur Control Panel ke tamam *
 
 ## 🚀 3. Platform-by-Platform Setup (پلیٹ فارم وار طریقہ کار)
 
-### 1. Vercel (Frontend UI Dashboard)
+### 1. Vercel (Frontend UI Dashboard - صرف اور صرف فرنٹ اینڈ کے لیے)
 - **Root Directory**: `vercel`
-- **Build Command**: Leave default (Static HTML)
+- **Build Command**: Leave default (Static HTML / Serverless)
+- **Output Directory**: `.`
+- **NOTE ON SESSION_ID**: Vercel ke environment variables mein `SESSION_ID` **hargiz na dalein**! Har client/user dashboard par apna Gmail aur Session ID enter karta hai, jo backend aur GitHub Secret Gist par securely log ho jata hai.
 - **Environment Variables**:
   ```env
-  VITE_API_BASE_URL=https://your-backend.up.railway.app
+  # Configure one, two, or all three backends (Vercel automatically probes & connects to the active one!):
+  RENDER_BACKEND_URL=https://your-bot-service.onrender.com
+  RAILWAY_BACKEND_URL=https://your-bot-service.up.railway.app
+  HEROKU_BACKEND_URL=https://your-bot-app.herokuapp.com
+  BACKEND_URL=http://localhost:3000
+
+  # Branding & Settings:
   VITE_APP_TITLE=ZAID ASHIQ STUDIO - WhatsApp Control Panel
   VITE_DEFAULT_TIMEZONE=Asia/Karachi
   ```

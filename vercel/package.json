@@ -3,6 +3,7 @@
   "version": "3.0.0",
   "description": "ZAID ASHIQ STUDIO - Web Control Panel & Progressive Web App",
   "private": true,
+  "main": "index.js",
   "scripts": {
     "build": "echo 'Frontend static build complete'"
   },

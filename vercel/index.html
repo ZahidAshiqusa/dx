@@ -301,27 +301,79 @@
     <!-- Active Backend Notice Banner -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl bg-obsidian-900 border border-obsidian-800">
       <div class="flex items-center gap-3">
-        <div class="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-          <i data-lucide="server" class="w-4 h-4"></i>
+        <div id="backend-icon-container" class="w-9 h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+          <i data-lucide="server" id="backend-platform-icon" class="w-4 h-4"></i>
         </div>
         <div class="text-xs">
-          <div class="flex items-center gap-2 text-neutral-400">
-            <span>Target Backend URL</span>
+          <div class="flex flex-wrap items-center gap-2 text-neutral-400">
+            <span>Active WhatsApp Backend</span>
             <span aria-hidden="true">·</span>
-            <span id="backend-platform-tag" class="text-emerald-400 font-mono font-medium">Auto-Detecting</span>
+            <span id="backend-platform-tag" class="px-2 py-0.5 rounded text-[11px] font-mono font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20">Auto-Detecting...</span>
             <span aria-hidden="true">·</span>
-            <span id="backend-latency" class="font-mono tabular-nums text-neutral-400">-- ms</span>
+            <span id="backend-latency" class="font-mono tabular-nums text-neutral-300">-- ms</span>
           </div>
-          <div id="current-backend-url" class="font-mono text-white font-medium mt-0.5 truncate max-w-xs sm:max-w-md">
-            http://localhost:3000
+          <div id="current-backend-url" class="font-mono text-white font-medium mt-0.5 truncate max-w-xs sm:max-w-md md:max-w-xl">
+            Detecting active backend service...
           </div>
         </div>
       </div>
 
-      <div class="flex items-center gap-2">
-        <button onclick="toggleDrawer(true)" class="px-3 py-1.5 text-xs font-semibold text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 rounded-lg transition-colors flex items-center gap-1.5">
+      <div class="flex items-center gap-2 shrink-0">
+        <button
+          onclick="autoDetectActiveBackend(true)"
+          id="btn-auto-detect-header"
+          title="Scan and auto-lock onto active Render, Railway, or Heroku backend"
+          class="px-3 py-1.5 text-xs font-medium text-neutral-300 hover:text-white bg-obsidian-850 hover:bg-obsidian-800 border border-obsidian-750 rounded-lg transition-colors flex items-center gap-1.5"
+        >
+          <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-emerald-400"></i>
+          <span>Auto-Detect</span>
+        </button>
+
+        <button
+          onclick="selectTabAndClose('backends')"
+          class="px-3 py-1.5 text-xs font-medium text-neutral-300 hover:text-white bg-obsidian-850 hover:bg-obsidian-800 border border-obsidian-750 rounded-lg transition-colors flex items-center gap-1.5"
+        >
+          <i data-lucide="cloud" class="w-3.5 h-3.5 text-cyan-400"></i>
+          <span>Clouds</span>
+        </button>
+
+        <button
+          onclick="toggleDrawer(true)"
+          class="px-3 py-1.5 text-xs font-semibold text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 rounded-lg transition-colors flex items-center gap-1.5"
+        >
           <i data-lucide="grid" class="w-3.5 h-3.5"></i>
-          <span>All Features (☰)</span>
+          <span>Features (☰)</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Dynamic Offline / Disconnected Alert Banner -->
+    <div id="backend-offline-alert" class="hidden p-4 rounded-xl bg-amber-950/40 border border-amber-500/40 text-xs text-amber-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 shadow-lg">
+      <div class="flex items-center gap-3">
+        <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-400 shrink-0"></i>
+        <div>
+          <span class="font-bold text-white">No WhatsApp Backend Connected:</span>
+          <span id="backend-offline-msg" class="text-amber-300 ml-1">Make sure your Render, Railway, or Heroku backend is running.</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 w-full md:w-auto">
+        <input
+          type="url"
+          id="quick-backend-input"
+          placeholder="https://your-bot.onrender.com"
+          class="px-2.5 py-1 text-xs rounded bg-obsidian-950 border border-obsidian-750 text-white font-mono focus:outline-none focus:border-amber-400 w-full md:w-64"
+        />
+        <button
+          onclick="connectQuickBackend()"
+          class="px-3 py-1 text-xs font-semibold text-obsidian-950 bg-amber-400 hover:bg-amber-300 rounded transition-colors whitespace-nowrap"
+        >
+          Connect
+        </button>
+        <button
+          onclick="autoDetectActiveBackend(true)"
+          class="px-3 py-1 text-xs font-medium text-white bg-obsidian-850 hover:bg-obsidian-800 border border-obsidian-750 rounded transition-colors whitespace-nowrap"
+        >
+          Scan
         </button>
       </div>
     </div>
@@ -1264,38 +1316,139 @@
     <!-- ======================================================================= -->
     <!-- TAB 10: MULTI-CLOUD DEPLOYMENT ENDPOINTS                                -->
     <!-- ======================================================================= -->
+    <!-- ======================================================================= -->
+    <!-- TAB 10: MULTI-CLOUD DEPLOYMENT ENDPOINTS & AUTO-DETECTION HUB           -->
+    <!-- ======================================================================= -->
     <section id="tab-backends" class="tab-content hidden space-y-6">
       
-      <div class="p-6 rounded-xl bg-obsidian-900 border border-obsidian-800">
-        <h2 class="text-xl font-bold text-white tracking-tight mb-2">Multi-Cloud Deployment Endpoints</h2>
-        <p class="text-sm text-neutral-400 leading-relaxed max-w-3xl">
-          This project contains 4 platform-named directories. Your frontend on Vercel can dynamically communicate with any of your backend deployments. Enter your deployed URL below or choose from the presets:
-        </p>
+      <!-- Hub Header & Auto-Detect Banner -->
+      <div class="p-6 rounded-xl bg-obsidian-900 border border-obsidian-800 space-y-4">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold tracking-wide uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                Architectural Parity
+              </span>
+              <span class="text-xs text-neutral-400">Vercel (UI Only) + Render / Railway / Heroku (Backend Sockets)</span>
+            </div>
+            <h2 class="text-xl font-bold text-white tracking-tight">Multi-Cloud Backend Discovery & Control Hub</h2>
+            <p class="text-xs text-neutral-400 mt-1 max-w-3xl leading-relaxed">
+              Vercel hosts the responsive dashboard UI. WhatsApp's real-time Baileys socket runs on Render, Railway, or Heroku.
+              The system automatically probes all configured backends in parallel and locks onto the first active, healthy service.
+            </p>
+          </div>
+
+          <!-- Master Auto-Detect Trigger -->
+          <div class="flex flex-wrap items-center gap-3 shrink-0">
+            <button
+              onclick="autoDetectActiveBackend(true)"
+              id="btn-auto-detect-tab"
+              class="px-4 py-2.5 text-xs font-semibold text-obsidian-950 bg-emerald-400 hover:bg-emerald-300 rounded-xl transition-all shadow-lg shadow-emerald-500/10 flex items-center gap-2"
+            >
+              <i data-lucide="zap" class="w-4 h-4"></i>
+              <span>Auto-Detect & Connect Best Backend</span>
+            </button>
+
+            <button
+              onclick="toggleAutoFailover()"
+              id="btn-failover-toggle"
+              class="px-3.5 py-2.5 text-xs font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 rounded-xl transition-colors flex items-center gap-2"
+            >
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span id="failover-label">Auto-Failover: Enabled</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Current Active Live Route -->
+        <div class="p-3.5 rounded-lg bg-obsidian-950 border border-obsidian-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+          <div class="flex items-center gap-2.5">
+            <span class="text-neutral-400">Current Linked Backend:</span>
+            <span id="hub-active-platform" class="px-2 py-0.5 rounded text-[11px] font-mono font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              Auto
+            </span>
+            <code id="hub-active-url" class="text-white font-mono font-medium">Detecting...</code>
+          </div>
+          <div class="flex items-center gap-3 text-neutral-400 font-mono text-[11px]">
+            <span>Latency: <strong id="hub-latency" class="text-emerald-400">-- ms</strong></span>
+            <span>Uptime: <strong id="hub-uptime" class="text-white">--</strong></span>
+          </div>
+        </div>
       </div>
 
+      <!-- 4 Platform Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         
-        <!-- Platform 1: Railway -->
-        <div class="p-6 rounded-xl bg-obsidian-900 border border-obsidian-800 flex flex-col justify-between">
+        <!-- Platform 1: Render -->
+        <div id="card-backend-render" class="p-6 rounded-xl bg-obsidian-900 border border-obsidian-800 flex flex-col justify-between transition-all">
           <div>
             <div class="flex items-center justify-between mb-3">
-              <div class="flex items-center gap-2">
-                <div class="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 font-bold font-mono text-xs">
+              <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 font-bold font-mono text-xs">
+                  RD
+                </div>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <h3 class="text-sm font-bold text-white">Render Cloud</h3>
+                    <span id="active-badge-render" class="hidden px-2 py-0.5 text-[10px] font-mono font-bold text-cyan-400 bg-cyan-500/10 border border-cyan-500/30 rounded">ACTIVE</span>
+                  </div>
+                  <div class="text-[11px] text-neutral-400">Folder: <code class="text-cyan-300">render/</code> · PORT 10000</div>
+                </div>
+              </div>
+              <span id="ping-badge-render" class="text-xs font-mono text-neutral-500">Unprobed</span>
+            </div>
+
+            <p class="text-xs text-neutral-400 mb-4 leading-relaxed">
+              Native Web Service with <code class="text-cyan-300">render.yaml</code> blueprint. Keeps alive with zero-downtime health checking at <code class="text-neutral-300">/api/health</code>.
+            </p>
+
+            <div class="space-y-1.5">
+              <label class="block text-xs font-mono text-neutral-400">Render Public Service URL</label>
+              <input
+                type="url"
+                id="url-render"
+                placeholder="https://your-bot-service.onrender.com"
+                class="w-full px-3 py-2 rounded-lg bg-obsidian-950 border border-obsidian-750 text-white font-mono text-xs focus:outline-none focus:border-cyan-500"
+              />
+            </div>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-obsidian-800 flex items-center justify-between gap-2">
+            <button onclick="pingPlatform('render')" class="px-3 py-1.5 text-xs font-medium text-neutral-300 hover:text-white bg-obsidian-850 hover:bg-obsidian-800 border border-obsidian-750 rounded-lg transition-colors flex items-center gap-1.5">
+              <i data-lucide="activity" class="w-3.5 h-3.5 text-cyan-400"></i>
+              <span>Ping Health</span>
+            </button>
+            <button onclick="setActiveBackend('render')" class="px-3.5 py-1.5 text-xs font-semibold text-white bg-cyan-600 hover:bg-cyan-500 rounded-lg transition-colors flex items-center gap-1.5">
+              <i data-lucide="check" class="w-3.5 h-3.5"></i>
+              <span>Use Render Active</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Platform 2: Railway -->
+        <div id="card-backend-railway" class="p-6 rounded-xl bg-obsidian-900 border border-obsidian-800 flex flex-col justify-between transition-all">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 font-bold font-mono text-xs">
                   RW
                 </div>
                 <div>
-                  <h3 class="text-sm font-bold text-white">Railway Deployment</h3>
-                  <div class="text-[11px] text-neutral-400">Folder: <code class="text-purple-300">railway/</code></div>
+                  <div class="flex items-center gap-2">
+                    <h3 class="text-sm font-bold text-white">Railway Cloud</h3>
+                    <span id="active-badge-railway" class="hidden px-2 py-0.5 text-[10px] font-mono font-bold text-purple-400 bg-purple-500/10 border border-purple-500/30 rounded">ACTIVE</span>
+                  </div>
+                  <div class="text-[11px] text-neutral-400">Folder: <code class="text-purple-300">railway/</code> · PORT 8080</div>
                 </div>
               </div>
               <span id="ping-badge-railway" class="text-xs font-mono text-neutral-500">Unprobed</span>
             </div>
 
             <p class="text-xs text-neutral-400 mb-4 leading-relaxed">
-              Standard continuous WebSocket daemon. Default PORT 8080 with automated health checking and zero-config deployment.
+              Continuous WebSocket daemon with zero-config auto-deploy. Native persistent socket stability on custom domains.
             </p>
 
-            <div class="space-y-2">
+            <div class="space-y-1.5">
               <label class="block text-xs font-mono text-neutral-400">Railway Public Service URL</label>
               <input
                 type="url"
@@ -1309,54 +1462,103 @@
           <div class="mt-6 pt-4 border-t border-obsidian-800 flex items-center justify-between gap-2">
             <button onclick="pingPlatform('railway')" class="px-3 py-1.5 text-xs font-medium text-neutral-300 hover:text-white bg-obsidian-850 hover:bg-obsidian-800 border border-obsidian-750 rounded-lg transition-colors flex items-center gap-1.5">
               <i data-lucide="activity" class="w-3.5 h-3.5 text-purple-400"></i>
-              <span>Ping</span>
+              <span>Ping Health</span>
             </button>
-            <button onclick="setActiveBackend('railway')" class="px-3 py-1.5 text-xs font-semibold text-white bg-purple-600 hover:bg-purple-500 rounded-lg transition-colors flex items-center gap-1.5">
+            <button onclick="setActiveBackend('railway')" class="px-3.5 py-1.5 text-xs font-semibold text-white bg-purple-600 hover:bg-purple-500 rounded-lg transition-colors flex items-center gap-1.5">
               <i data-lucide="check" class="w-3.5 h-3.5"></i>
-              <span>Use As Active</span>
+              <span>Use Railway Active</span>
             </button>
           </div>
         </div>
 
-        <!-- Platform 2: Render -->
-        <div class="p-6 rounded-xl bg-obsidian-900 border border-obsidian-800 flex flex-col justify-between">
+        <!-- Platform 3: Heroku -->
+        <div id="card-backend-heroku" class="p-6 rounded-xl bg-obsidian-900 border border-obsidian-800 flex flex-col justify-between transition-all">
           <div>
             <div class="flex items-center justify-between mb-3">
-              <div class="flex items-center gap-2">
-                <div class="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 font-bold font-mono text-xs">
-                  RD
+              <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-lg bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 font-bold font-mono text-xs">
+                  HK
                 </div>
                 <div>
-                  <h3 class="text-sm font-bold text-white">Render Deployment</h3>
-                  <div class="text-[11px] text-neutral-400">Folder: <code class="text-cyan-300">render/</code></div>
+                  <div class="flex items-center gap-2">
+                    <h3 class="text-sm font-bold text-white">Heroku Cloud</h3>
+                    <span id="active-badge-heroku" class="hidden px-2 py-0.5 text-[10px] font-mono font-bold text-rose-400 bg-rose-500/10 border border-rose-500/30 rounded">ACTIVE</span>
+                  </div>
+                  <div class="text-[11px] text-neutral-400">Folder: <code class="text-rose-300">heroku/</code> · Dynamic Dyno PORT</div>
                 </div>
               </div>
-              <span id="ping-badge-render" class="text-xs font-mono text-neutral-500">Unprobed</span>
+              <span id="ping-badge-heroku" class="text-xs font-mono text-neutral-500">Unprobed</span>
             </div>
 
             <p class="text-xs text-neutral-400 mb-4 leading-relaxed">
-              Native Web Service with render.yaml blueprint. Default PORT 10000 with automatic keep-alive ping engine.
+              Standard Heroku Dyno configured via <code class="text-rose-300">Procfile</code> (<code class="text-neutral-300">web: node server.js</code>) and automatic environment injection.
             </p>
 
-            <div class="space-y-2">
-              <label class="block text-xs font-mono text-neutral-400">Render Onrender URL</label>
+            <div class="space-y-1.5">
+              <label class="block text-xs font-mono text-neutral-400">Heroku App URL</label>
               <input
                 type="url"
-                id="url-render"
-                placeholder="https://your-bot-service.onrender.com"
-                class="w-full px-3 py-2 rounded-lg bg-obsidian-950 border border-obsidian-750 text-white font-mono text-xs focus:outline-none focus:border-cyan-500"
+                id="url-heroku"
+                placeholder="https://your-bot-name.herokuapp.com"
+                class="w-full px-3 py-2 rounded-lg bg-obsidian-950 border border-obsidian-750 text-white font-mono text-xs focus:outline-none focus:border-rose-500"
               />
             </div>
           </div>
 
           <div class="mt-6 pt-4 border-t border-obsidian-800 flex items-center justify-between gap-2">
-            <button onclick="pingPlatform('render')" class="px-3 py-1.5 text-xs font-medium text-neutral-300 hover:text-white bg-obsidian-850 hover:bg-obsidian-800 border border-obsidian-750 rounded-lg transition-colors flex items-center gap-1.5">
-              <i data-lucide="activity" class="w-3.5 h-3.5 text-cyan-400"></i>
-              <span>Ping</span>
+            <button onclick="pingPlatform('heroku')" class="px-3 py-1.5 text-xs font-medium text-neutral-300 hover:text-white bg-obsidian-850 hover:bg-obsidian-800 border border-obsidian-750 rounded-lg transition-colors flex items-center gap-1.5">
+              <i data-lucide="activity" class="w-3.5 h-3.5 text-rose-400"></i>
+              <span>Ping Health</span>
             </button>
-            <button onclick="setActiveBackend('render')" class="px-3 py-1.5 text-xs font-semibold text-white bg-cyan-600 hover:bg-cyan-500 rounded-lg transition-colors flex items-center gap-1.5">
+            <button onclick="setActiveBackend('heroku')" class="px-3.5 py-1.5 text-xs font-semibold text-white bg-rose-600 hover:bg-rose-500 rounded-lg transition-colors flex items-center gap-1.5">
               <i data-lucide="check" class="w-3.5 h-3.5"></i>
-              <span>Use As Active</span>
+              <span>Use Heroku Active</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Platform 4: Custom VPS / Local Server -->
+        <div id="card-backend-custom" class="p-6 rounded-xl bg-obsidian-900 border border-obsidian-800 flex flex-col justify-between transition-all">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold font-mono text-xs">
+                  VPS
+                </div>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <h3 class="text-sm font-bold text-white">Custom / Local Dev</h3>
+                    <span id="active-badge-custom" class="hidden px-2 py-0.5 text-[10px] font-mono font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 rounded">ACTIVE</span>
+                  </div>
+                  <div class="text-[11px] text-neutral-400">Root: <code class="text-emerald-300">server.js</code> · PORT 3000</div>
+                </div>
+              </div>
+              <span id="ping-badge-custom" class="text-xs font-mono text-neutral-500">Unprobed</span>
+            </div>
+
+            <p class="text-xs text-neutral-400 mb-4 leading-relaxed">
+              Direct connection to a self-hosted VPS, Docker container, or local development server listening on port 3000.
+            </p>
+
+            <div class="space-y-1.5">
+              <label class="block text-xs font-mono text-neutral-400">Custom Server Base URL</label>
+              <input
+                type="url"
+                id="url-custom"
+                placeholder="http://localhost:3000"
+                class="w-full px-3 py-2 rounded-lg bg-obsidian-950 border border-obsidian-750 text-white font-mono text-xs focus:outline-none focus:border-emerald-500"
+              />
+            </div>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-obsidian-800 flex items-center justify-between gap-2">
+            <button onclick="pingPlatform('custom')" class="px-3 py-1.5 text-xs font-medium text-neutral-300 hover:text-white bg-obsidian-850 hover:bg-obsidian-800 border border-obsidian-750 rounded-lg transition-colors flex items-center gap-1.5">
+              <i data-lucide="activity" class="w-3.5 h-3.5 text-emerald-400"></i>
+              <span>Ping Health</span>
+            </button>
+            <button onclick="setActiveBackend('custom')" class="px-3.5 py-1.5 text-xs font-semibold text-obsidian-950 bg-emerald-400 hover:bg-emerald-300 rounded-lg transition-colors flex items-center gap-1.5">
+              <i data-lucide="check" class="w-3.5 h-3.5"></i>
+              <span>Use Custom Active</span>
             </button>
           </div>
         </div>
@@ -1478,14 +1680,17 @@
       renderDynamicButtonInputs();
       renderCommands();
       loadStoredUrls();
-      refreshBackendData();
-      fetchClientSessions();
-      initSocket();
+      
+      // Auto-detect and connect to the active backend (Render / Railway / Heroku / Local)
+      autoDetectActiveBackend(false);
 
       // Periodic background syncs
       setInterval(fetchTracerData, 5000);
       setInterval(fetchDeletedMessages, 8000);
       setInterval(fetchClientSessions, 10000);
+
+      // Continuous Health Check & Automated Failover Heartbeat (every 10 seconds)
+      setInterval(runBackendHeartbeat, 10000);
     });
 
     // ─── Pakistan Standard Time Digital Clock (PKT / Asia/Karachi UTC+5) ────
@@ -2404,9 +2609,13 @@
       showToast(`Command ${cmdName} tested in sandbox.`);
     }
 
-    // ─── Multi-Cloud Endpoints ────────────────────────────────────────────
+    // ─── Multi-Cloud Endpoints & Automated Discovery Engine ─────────────
+    let isProbingBackends = false;
+    let autoFailoverEnabled = true;
+    let failedHealthCount = 0;
+
     function loadStoredUrls() {
-      ['railway', 'render'].forEach(platform => {
+      ['railway', 'render', 'heroku', 'custom'].forEach(platform => {
         const stored = localStorage.getItem(`backend_url_${platform}`);
         if (stored) {
           const input = document.getElementById(`url-${platform}`);
@@ -2415,52 +2624,381 @@
       });
     }
 
-    async function pingPlatform(platform) {
-      const input = document.getElementById(`url-${platform}`);
-      const badge = document.getElementById(`ping-badge-${platform}`);
-      const url = input ? input.value.trim() : '';
+    async function autoDetectActiveBackend(userInitiated = false) {
+      if (isProbingBackends) return;
+      isProbingBackends = true;
 
-      if (!url) {
-        badge.innerText = 'No URL set';
-        badge.className = 'text-xs font-mono text-amber-400';
-        return;
+      const btnHeader = document.getElementById('btn-auto-detect-header');
+      const btnTab = document.getElementById('btn-auto-detect-tab');
+      const platformTag = document.getElementById('backend-platform-tag');
+
+      if (btnHeader) btnHeader.classList.add('animate-spin');
+      if (btnTab) btnTab.innerHTML = '<span class="animate-pulse">Scanning Backends...</span>';
+      if (platformTag && (!activeBackendUrl || activeBackendUrl === 'Detecting active backend service...')) {
+        platformTag.innerText = 'Scanning...';
       }
 
-      badge.innerText = 'Pinging...';
-      badge.className = 'text-xs font-mono text-neutral-400';
-      const start = performance.now();
-
       try {
-        const res = await fetch(`${url}/api/health`, { method: 'GET', cache: 'no-store' });
-        const latency = Math.round(performance.now() - start);
-        if (res.ok) {
-          badge.innerText = `Online (${latency}ms)`;
-          badge.className = 'text-xs font-mono text-emerald-400 font-semibold';
+        // 1. Query Vercel /api/env
+        let envBackends = {};
+        try {
+          const envRes = await fetch('/api/env', { cache: 'no-store' });
+          if (envRes.ok) {
+            const envData = await envRes.json();
+            if (envData.backends) {
+              envBackends = envData.backends;
+            } else if (envData.backendUrl) {
+              envBackends.custom = envData.backendUrl;
+            }
+          }
+        } catch (_) {}
+
+        // Populate inputs if currently blank
+        if (envBackends.render) {
+          const el = document.getElementById('url-render');
+          if (el && !el.value) el.value = envBackends.render;
+        }
+        if (envBackends.railway) {
+          const el = document.getElementById('url-railway');
+          if (el && !el.value) el.value = envBackends.railway;
+        }
+        if (envBackends.heroku) {
+          const el = document.getElementById('url-heroku');
+          if (el && !el.value) el.value = envBackends.heroku;
+        }
+        if (envBackends.custom) {
+          const el = document.getElementById('url-custom');
+          if (el && !el.value) el.value = envBackends.custom;
+        }
+
+        // 2. Build candidate pool
+        const candidates = [];
+        function addCandidate(id, name, url) {
+          if (!url || typeof url !== 'string') return;
+          const clean = url.trim().replace(/\/+$/, '');
+          if (!clean || !clean.startsWith('http')) return;
+          if (!candidates.some(c => c.url.toLowerCase() === clean.toLowerCase())) {
+            candidates.push({ id, name, url: clean });
+          }
+        }
+
+        if (envBackends.render) addCandidate('render', 'Render Cloud', envBackends.render);
+        if (envBackends.railway) addCandidate('railway', 'Railway Cloud', envBackends.railway);
+        if (envBackends.heroku) addCandidate('heroku', 'Heroku Cloud', envBackends.heroku);
+        if (envBackends.custom) addCandidate('custom', 'Custom Server', envBackends.custom);
+
+        addCandidate('render', 'Render Cloud', localStorage.getItem('backend_url_render'));
+        addCandidate('railway', 'Railway Cloud', localStorage.getItem('backend_url_railway'));
+        addCandidate('heroku', 'Heroku Cloud', localStorage.getItem('backend_url_heroku'));
+        addCandidate('custom', 'Custom Server', localStorage.getItem('backend_url_custom'));
+        addCandidate('last', 'Active Backend', localStorage.getItem('activeBackendUrl'));
+
+        ['render', 'railway', 'heroku', 'custom'].forEach(p => {
+          const inp = document.getElementById(`url-${p}`);
+          if (inp && inp.value) addCandidate(p, `${p.toUpperCase()} Service`, inp.value);
+        });
+
+        // Add local origin if testing on non-vercel domain
+        if (!window.location.hostname.includes('vercel.app')) {
+          addCandidate('custom', 'Local Dev', window.location.origin);
+        }
+
+        if (candidates.length === 0) {
+          showOfflineAlert('No backend URLs configured. Please enter your Render, Railway, or Heroku service URL.');
+          return;
+        }
+
+        // 3. Parallel probing with latency measurement
+        const probePromises = candidates.map(async (c) => {
+          const start = performance.now();
+          try {
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), 3500);
+            const res = await fetch(`${c.url}/api/health`, {
+              method: 'GET',
+              cache: 'no-store',
+              signal: controller.signal
+            });
+            clearTimeout(timer);
+            const latency = Math.round(performance.now() - start);
+            if (res.ok) {
+              const json = await res.json().catch(() => ({}));
+              return {
+                ...c,
+                online: true,
+                latency,
+                platform: json.platform || c.name,
+                connectionStatus: json.connectionStatus,
+                botJid: json.botJid,
+                uptime: json.uptime
+              };
+            }
+          } catch (_) {}
+          return { ...c, online: false, latency: 99999 };
+        });
+
+        const results = await Promise.all(probePromises);
+        const online = results.filter(r => r.online).sort((a, b) => a.latency - b.latency);
+
+        // Update Tab 10 ping badges
+        results.forEach(res => {
+          const badge = document.getElementById(`ping-badge-${res.id}`);
+          if (badge) {
+            if (res.online) {
+              badge.innerText = `Online (${res.latency}ms)`;
+              badge.className = 'text-xs font-mono text-emerald-400 font-semibold';
+            } else {
+              badge.innerText = 'Offline';
+              badge.className = 'text-xs font-mono text-rose-400';
+            }
+          }
+        });
+
+        if (online.length > 0) {
+          const best = online[0];
+          failedHealthCount = 0;
+          hideOfflineAlert();
+          applyActiveBackend(best.url, best.platform || best.name, best.latency, best.connectionStatus, best.botJid, best.uptime);
+          if (userInitiated) {
+            showToast(`Auto-detected active backend: ${best.platform || best.name} (${best.latency}ms)!`);
+          }
         } else {
-          badge.innerText = `HTTP ${res.status}`;
-          badge.className = 'text-xs font-mono text-amber-400';
+          updateConnectionStatus('disconnected');
+          showOfflineAlert('None of your configured backend services responded to health checks. Check your Render, Railway, or Heroku deployment.');
         }
       } catch (err) {
-        badge.innerText = 'Unreachable';
-        badge.className = 'text-xs font-mono text-rose-400';
+        console.error('[AUTO-DETECT] Error:', err);
+      } finally {
+        isProbingBackends = false;
+        if (btnHeader) btnHeader.classList.remove('animate-spin');
+        if (btnTab) btnTab.innerHTML = '<i data-lucide="zap" class="w-4 h-4"></i><span>Auto-Detect & Connect Best Backend</span>';
+        lucide.createIcons();
       }
     }
 
-    function setActiveBackend(platform) {
+    function applyActiveBackend(url, platformName, latency, connectionStatus, botJid, uptime = null) {
+      const urlChanged = (activeBackendUrl !== url);
+      activeBackendUrl = url;
+      localStorage.setItem('activeBackendUrl', url);
+
+      updateBackendIndicators(platformName, url, latency, uptime);
+
+      // Tab 10 cards visual highlight
+      ['render', 'railway', 'heroku', 'custom'].forEach(p => {
+        const card = document.getElementById(`card-backend-${p}`);
+        const activeBadge = document.getElementById(`active-badge-${p}`);
+        const input = document.getElementById(`url-${p}`);
+        const isCurrent = input && input.value && url.includes(input.value.replace(/^https?:\/\//, '').replace(/\/+$/, ''));
+        if (card) {
+          if (isCurrent) {
+            card.classList.add('border-emerald-500/60', 'bg-emerald-950/10');
+          } else {
+            card.classList.remove('border-emerald-500/60', 'bg-emerald-950/10');
+          }
+        }
+        if (activeBadge) {
+          activeBadge.classList.toggle('hidden', !isCurrent);
+        }
+      });
+
+      if (connectionStatus) {
+        updateConnectionStatus(connectionStatus, botJid);
+      }
+
+      // Re-initialize socket if URL changed or not currently connected
+      if (urlChanged || !socket || !socket.connected) {
+        initSocket();
+      }
+
+      // Sync all live WhatsApp features from this active backend
+      fetchQrCode();
+      fetchTracerData();
+      fetchDeletedMessages();
+      fetchClientSessions();
+      fetchStatusStories();
+    }
+
+    function updateBackendIndicators(platformName, url, latency, uptime) {
+      const urlElem = document.getElementById('current-backend-url');
+      const platformElem = document.getElementById('backend-platform-tag');
+      const latencyElem = document.getElementById('backend-latency');
+      const hubUrl = document.getElementById('hub-active-url');
+      const hubPlatform = document.getElementById('hub-active-platform');
+      const hubLatency = document.getElementById('hub-latency');
+      const hubUptime = document.getElementById('hub-uptime');
+
+      if (urlElem) urlElem.innerText = url;
+      if (hubUrl) hubUrl.innerText = url;
+
+      if (latency) {
+        if (latencyElem) latencyElem.innerText = `${latency} ms`;
+        if (hubLatency) hubLatency.innerText = `${latency} ms`;
+      }
+
+      if (uptime) {
+        if (hubUptime) hubUptime.innerText = uptime;
+        const statUptime = document.getElementById('stat-uptime');
+        if (statUptime) statUptime.innerText = uptime;
+      }
+
+      const pName = platformName || 'Connected';
+      if (platformElem) {
+        platformElem.innerText = pName;
+        const lower = pName.toLowerCase();
+        if (lower.includes('render')) {
+          platformElem.className = 'px-2 py-0.5 rounded text-[11px] font-mono font-semibold text-cyan-400 bg-cyan-500/10 border border-cyan-500/30';
+        } else if (lower.includes('railway')) {
+          platformElem.className = 'px-2 py-0.5 rounded text-[11px] font-mono font-semibold text-purple-400 bg-purple-500/10 border border-purple-500/30';
+        } else if (lower.includes('heroku')) {
+          platformElem.className = 'px-2 py-0.5 rounded text-[11px] font-mono font-semibold text-rose-400 bg-rose-500/10 border border-rose-500/30';
+        } else {
+          platformElem.className = 'px-2 py-0.5 rounded text-[11px] font-mono font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30';
+        }
+      }
+
+      if (hubPlatform) {
+        hubPlatform.innerText = pName;
+      }
+    }
+
+    async function runBackendHeartbeat() {
+      if (isProbingBackends || !activeBackendUrl) return;
+      const start = performance.now();
+      try {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 3500);
+        const res = await fetch(`${activeBackendUrl}/api/health`, {
+          method: 'GET',
+          cache: 'no-store',
+          signal: controller.signal
+        });
+        clearTimeout(timer);
+        if (res.ok) {
+          failedHealthCount = 0;
+          const latency = Math.round(performance.now() - start);
+          const data = await res.json().catch(() => ({}));
+          updateBackendIndicators(data.platform, activeBackendUrl, latency, data.uptime);
+          if (data.connectionStatus) updateConnectionStatus(data.connectionStatus, data.botJid);
+          hideOfflineAlert();
+        } else {
+          failedHealthCount++;
+        }
+      } catch (err) {
+        failedHealthCount++;
+      }
+
+      if (failedHealthCount >= 2) {
+        updateConnectionStatus('disconnected');
+        if (autoFailoverEnabled) {
+          console.warn('[FAILOVER] Backend unreachable. Scanning for alive failover candidate...');
+          autoDetectActiveBackend(false);
+        } else {
+          showOfflineAlert('Active backend connection lost. Click Auto-Detect or switch backends.');
+        }
+      }
+    }
+
+    function toggleAutoFailover() {
+      autoFailoverEnabled = !autoFailoverEnabled;
+      const label = document.getElementById('failover-label');
+      const btn = document.getElementById('btn-failover-toggle');
+      if (autoFailoverEnabled) {
+        label.innerText = 'Auto-Failover: Enabled';
+        btn.className = 'px-3.5 py-2.5 text-xs font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 rounded-xl transition-colors flex items-center gap-2';
+        showToast('Auto-failover enabled: System will automatically switch to backup backend if one sleeps.');
+      } else {
+        label.innerText = 'Auto-Failover: Disabled';
+        btn.className = 'px-3.5 py-2.5 text-xs font-medium text-neutral-400 bg-obsidian-950 border border-obsidian-750 rounded-xl transition-colors flex items-center gap-2';
+        showToast('Auto-failover disabled.');
+      }
+    }
+
+    function connectQuickBackend() {
+      const inp = document.getElementById('quick-backend-input');
+      const url = inp ? inp.value.trim().replace(/\/+$/, '') : '';
+      if (!url || !url.startsWith('http')) {
+        showToast('Please enter a valid HTTP/HTTPS URL');
+        return;
+      }
+      showToast('Connecting to specified backend...');
+      applyActiveBackend(url, 'Custom Backend', null, null, null);
+      autoDetectActiveBackend(true);
+    }
+
+    function showOfflineAlert(msg) {
+      const alert = document.getElementById('backend-offline-alert');
+      const msgEl = document.getElementById('backend-offline-msg');
+      if (alert) alert.classList.remove('hidden');
+      if (msgEl && msg) msgEl.innerText = msg;
+    }
+
+    function hideOfflineAlert() {
+      const alert = document.getElementById('backend-offline-alert');
+      if (alert) alert.classList.add('hidden');
+    }
+
+    async function pingPlatform(platform) {
       const input = document.getElementById(`url-${platform}`);
-      const url = input ? input.value.trim() : '';
+      const badge = document.getElementById(`ping-badge-${platform}`);
+      const url = input ? input.value.trim().replace(/\/+$/, '') : '';
 
       if (!url) {
-        showToast('Please enter a valid URL first.');
+        if (badge) {
+          badge.innerText = 'No URL set';
+          badge.className = 'text-xs font-mono text-amber-400';
+        }
+        showToast(`Please enter a URL for ${platform.toUpperCase()} first.`);
         return;
       }
 
-      activeBackendUrl = url;
-      localStorage.setItem('activeBackendUrl', url);
+      if (badge) {
+        badge.innerText = 'Pinging...';
+        badge.className = 'text-xs font-mono text-neutral-400';
+      }
+      const start = performance.now();
+
+      try {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 4000);
+        const res = await fetch(`${url}/api/health`, { method: 'GET', cache: 'no-store', signal: controller.signal });
+        clearTimeout(timer);
+        const latency = Math.round(performance.now() - start);
+        if (res.ok) {
+          const data = await res.json().catch(() => ({}));
+          if (badge) {
+            badge.innerText = `Online (${latency}ms)`;
+            badge.className = 'text-xs font-mono text-emerald-400 font-semibold';
+          }
+          showToast(`${platform.toUpperCase()} is Online! Latency: ${latency}ms`);
+        } else {
+          if (badge) {
+            badge.innerText = `HTTP ${res.status}`;
+            badge.className = 'text-xs font-mono text-amber-400';
+          }
+          showToast(`${platform.toUpperCase()} returned HTTP ${res.status}`);
+        }
+      } catch (err) {
+        if (badge) {
+          badge.innerText = 'Unreachable';
+          badge.className = 'text-xs font-mono text-rose-400';
+        }
+        showToast(`${platform.toUpperCase()} is unreachable or asleep`);
+      }
+    }
+
+    async function setActiveBackend(platform) {
+      const input = document.getElementById(`url-${platform}`);
+      const url = input ? input.value.trim().replace(/\/+$/, '') : '';
+
+      if (!url) {
+        showToast(`Please enter a valid URL for ${platform.toUpperCase()} first.`);
+        return;
+      }
+
       localStorage.setItem(`backend_url_${platform}`, url);
-      document.getElementById('current-backend-url').innerText = url;
-      showToast(`Active backend switched to: ${platform.toUpperCase()}`);
-      refreshBackendData();
+      showToast(`Switching to ${platform.toUpperCase()} backend...`);
+      applyActiveBackend(url, platform.toUpperCase(), null, null, null);
+      await refreshBackendData();
     }
 
     // ─── Broadcast Dispatcher ─────────────────────────────────────────────
@@ -2635,12 +3173,35 @@
     // ─── Realtime Socket.io Listener ──────────────────────────────────────
     function initSocket() {
       try {
-        socket = io(activeBackendUrl, { credentials: false });
+        if (socket) {
+          try { socket.disconnect(); } catch (_) {}
+        }
+        socket = io(activeBackendUrl, { credentials: false, transports: ['websocket', 'polling'] });
         socket.on('connect', () => {
           updateConnectionStatus('connected');
         });
         socket.on('status', (data) => {
           updateConnectionStatus(data.status, data.botJid);
+        });
+        socket.on('qr', (dataUrl) => {
+          const qrLoading = document.getElementById('qr-loading');
+          const qrContainer = document.getElementById('qr-container');
+          const qrEmpty = document.getElementById('qr-empty');
+          const qrImage = document.getElementById('qr-image');
+          if (qrImage) qrImage.src = dataUrl;
+          if (qrLoading) qrLoading.classList.add('hidden');
+          if (qrEmpty) qrEmpty.classList.add('hidden');
+          if (qrContainer) qrContainer.classList.remove('hidden');
+        });
+        socket.on('pairing_code', (data) => {
+          if (data && data.code) {
+            const rawCode = data.code;
+            const codeFormatted = rawCode.length === 8 ? `${rawCode.slice(0, 4)} - ${rawCode.slice(4)}` : rawCode;
+            const disp = document.getElementById('pair-code-display');
+            const cont = document.getElementById('pair-result-container');
+            if (disp) disp.innerText = codeFormatted;
+            if (cont) cont.classList.remove('hidden');
+          }
         });
         socket.on('online_tracer_target_added', () => {
           fetchTracerData();

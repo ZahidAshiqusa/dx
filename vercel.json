@@ -4,11 +4,11 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "/frontend/api/$1"
+      "destination": "/vercel/api/$1"
     },
     {
       "source": "/(.*)",
-      "destination": "/frontend/$1"
+      "destination": "/vercel/$1"
     }
   ],
   "headers": [

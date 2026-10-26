@@ -606,12 +606,16 @@ io.on('connection', (clientSocket) => {
 
 // ─── API Routes ─────────────────────────────────────────────────────────────
 
-// System Health & State (Render Zero-Downtime Health Check compatible)
+// System Health & State (Render Zero-Downtime Health Check, Railway & Heroku compatible)
 app.get('/api/health', (req, res) => {
+  const platform = (process.env.RENDER || process.env.RENDER_EXTERNAL_URL) 
+    ? 'Render' 
+    : (process.env.RAILWAY_ENVIRONMENT ? 'Railway' : (process.env.DYNO ? 'Heroku' : 'Node.js'));
+
   res.status(200).json({
     status: 'ok',
     name: 'ZAID ASHIQ STUDIO WhatsApp Bot & Control Panel',
-    platform: (process.env.RENDER || process.env.RENDER_EXTERNAL_URL) ? 'Render' : (process.env.RAILWAY_ENVIRONMENT ? 'Railway' : 'Node.js'),
+    platform,
     connectionStatus,
     botJid,
     uptime: Math.floor(process.uptime()) + 's',
@@ -634,19 +638,30 @@ app.get('/api/state', (req, res) => {
   });
 });
 
-// ─── Environment Provider (Supports Vercel, Render & Railway Parity) ─────────
+// ─── Environment Provider (Supports Vercel, Render, Railway & Heroku Parity) ──
 app.get('/api/env', (req, res) => {
-  const backendUrl = process.env.RENDER_BACKEND_URL || 
-                     process.env.RENDER_EXTERNAL_URL || 
-                     process.env.RAILWAY_BACKEND_URL || 
-                     process.env.BACKEND_URL || '';
+  const renderUrl = (process.env.RENDER_BACKEND_URL || process.env.RENDER_EXTERNAL_URL || process.env.VITE_RENDER_BACKEND_URL || '').trim().replace(/\/+$/, '');
+  const railwayUrl = (process.env.RAILWAY_BACKEND_URL || process.env.VITE_RAILWAY_BACKEND_URL || '').trim().replace(/\/+$/, '');
+  const herokuUrl = (process.env.HEROKU_BACKEND_URL || process.env.VITE_HEROKU_BACKEND_URL || (process.env.HEROKU_APP_NAME ? `https://${process.env.HEROKU_APP_NAME}.herokuapp.com` : '') || '').trim().replace(/\/+$/, '');
+  const genericUrl = (process.env.BACKEND_URL || process.env.VITE_API_BASE_URL || '').trim().replace(/\/+$/, '');
+
+  const provider = (process.env.RENDER || process.env.RENDER_EXTERNAL_URL) 
+    ? 'render' 
+    : (process.env.RAILWAY_ENVIRONMENT ? 'railway' : (process.env.DYNO ? 'heroku' : 'custom'));
+
   res.json({
     success: true,
-    backendUrl: backendUrl.trim().replace(/\/+$/, ''),
-    googleClientId: process.env.GOOGLE_CLIENT_ID || '',
+    backends: {
+      render: renderUrl,
+      railway: railwayUrl,
+      heroku: herokuUrl,
+      custom: genericUrl
+    },
+    backendUrl: renderUrl || railwayUrl || herokuUrl || genericUrl || '',
+    googleClientId: process.env.GOOGLE_CLIENT_ID || process.env.VITE_GOOGLE_CLIENT_ID || '',
     cloudinaryConfigured: cloudinaryManager.isConfigured(),
     githubBackupConfigured: githubBackup.isConfigured(),
-    provider: (process.env.RENDER || process.env.RENDER_EXTERNAL_URL) ? 'render' : (process.env.RAILWAY_ENVIRONMENT ? 'railway' : 'custom'),
+    provider,
     source: 'express_backend_environment'
   });
 });
