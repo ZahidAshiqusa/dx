@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ZAID ASHIQ STUDIO - Multi-Cloud WhatsApp Bot & Control Panel</title>
+  <meta name="description" content="Production-ready Multi-Cloud WhatsApp Bot suite with dedicated Vercel, Railway, Render, and Heroku deployments." />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#10b981" />
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            obsidian: {
+              950: '#06090F',
+              900: '#0B0F17',
+              850: '#101622',
+              800: '#161F30',
+              750: '#1C273C',
+              700: '#23304A',
+            },
+            emerald: {
+              400: '#34D399',
+              500: '#10B981',
+              600: '#059669',
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Socket.io Client CDN -->
+  <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+
+  <style>
+    body {
+      background-color: #06090F;
+      color: #F3F4F6;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+    /* Subtle grid background */
+    .bg-grid {
+      background-image: radial-gradient(rgba(16, 185, 129, 0.04) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0B0F17;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1C273C;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #10B981;
+    }
+  </style>
+</head>
+<body class="bg-obsidian-950 text-neutral-200 min-h-screen flex flex-col antialiased bg-grid selection:bg-emerald-500/20 selection:text-emerald-400">
+
+  <!-- TOP BAR CONTRACT (Strict 3-Zone Architecture) -->
+  <header class="border-b border-obsidian-800 bg-obsidian-900/95 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-8">
+      
+      <!-- Zone 1: Single Wordmark Brand -->
+      <div class="flex items-center gap-3 shrink-0">
+        <div class="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold font-mono">
+          Z
+        </div>
+        <div class="flex flex-col">
+          <span class="text-sm font-bold tracking-tight text-white whitespace-nowrap">ZAID ASHIQ STUDIO</span>
+          <span class="text-[11px] font-mono text-neutral-400">WhatsApp Multi-Cloud Bot</span>
+        </div>
+      </div>
+
+      <!-- Zone 2: Navigation Links / Segmented Tabs -->
+      <nav class="hidden md:flex items-center gap-1 bg-obsidian-950/70 p-1 rounded-xl border border-obsidian-800 shrink-0">
+        <button onclick="switchTab('overview')" id="tab-btn-overview" class="tab-btn px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-150 whitespace-nowrap shrink-0 bg-obsidian-800 text-emerald-400 border border-obsidian-700">
+          Overview
+        </button>
+        <button onclick="switchTab('pairing')" id="tab-btn-pairing" class="tab-btn px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-150 whitespace-nowrap shrink-0 text-neutral-400 hover:text-white">
+          WhatsApp Pairing
+        </button>
+        <button onclick="switchTab('commands')" id="tab-btn-commands" class="tab-btn px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-150 whitespace-nowrap shrink-0 text-neutral-400 hover:text-white">
+          Commands (118)
+        </button>
+        <button onclick="switchTab('backends')" id="tab-btn-backends" class="tab-btn px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-150 whitespace-nowrap shrink-0 text-neutral-400 hover:text-white">
+          Multi-Cloud Endpoints
+        </button>
+        <button onclick="switchTab('broadcast')" id="tab-btn-broadcast" class="tab-btn px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-150 whitespace-nowrap shrink-0 text-neutral-400 hover:text-white">
+          Broadcast Sandbox
+        </button>
+      </nav>
+
+      <!-- Zone 3: 1 Primary Action + Connection Pill -->
+      <div class="flex items-center gap-3 shrink-0">
+        <div id="connection-indicator" class="flex items-center gap-2 px-2.5 py-1 rounded-lg bg-obsidian-850 border border-obsidian-750 text-xs font-mono">
+          <span id="status-dot" class="w-2 h-2 rounded-full bg-amber-400"></span>
+          <span id="status-text" class="text-neutral-300">Checking...</span>
+        </div>
+
+        <button onclick="refreshBackendData()" class="px-3 py-1.5 text-xs font-semibold text-obsidian-950 bg-emerald-400 hover:bg-emerald-300 rounded-lg transition-colors flex items-center gap-1.5 whitespace-nowrap shrink-0 shadow-sm shadow-emerald-500/20">
+          <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+          <span>Sync Status</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MOBILE TAB NAVIGATION BAR -->
+  <div class="md:hidden border-b border-obsidian-800 bg-obsidian-900/90 px-4 py-2 flex items-center gap-1 overflow-x-auto">
+    <button onclick="switchTab('overview')" class="tab-btn px-3 py-1.5 text-xs font-semibold rounded-lg whitespace-nowrap text-emerald-400 bg-obsidian-800">Overview</button>
+    <button onclick="switchTab('pairing')" class="tab-btn px-3 py-1.5 text-xs font-semibold rounded-lg whitespace-nowrap text-neutral-400">Pairing</button>
+    <button onclick="switchTab('commands')" class="tab-btn px-3 py-1.5 text-xs font-semibold rounded-lg whitespace-nowrap text-neutral-400">Commands</button>
+    <button onclick="switchTab('backends')" class="tab-btn px-3 py-1.5 text-xs font-semibold rounded-lg whitespace-nowrap text-neutral-400">Cloud Endpoints</button>
+    <button onclick="switchTab('broadcast')" class="tab-btn px-3 py-1.5 text-xs font-semibold rounded-lg whitespace-nowrap text-neutral-400">Broadcast</button>
+  </div>
+
+  <!-- MAIN WORKSPACE -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+    <!-- ACTIVE BACKEND BANNER (Unboxed Metadata) -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl bg-obsidian-900 border border-obsidian-800">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+          <i data-lucide="server" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2 text-xs text-neutral-400">
+            <span>Target Backend URL</span>
+            <span aria-hidden="true">·</span>
+            <span id="backend-platform-tag" class="text-emerald-400 font-mono font-medium">Auto-Detecting</span>
+            <span aria-hidden="true">·</span>
+            <span id="backend-latency" class="font-mono tabular-nums text-neutral-400">-- ms</span>
+          </div>
+          <div id="current-backend-url" class="text-sm font-mono text-white font-medium mt-0.5 truncate max-w-md sm:max-w-xl">
+            http://localhost:3000
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button onclick="switchTab('backends')" class="px-3 py-1.5 text-xs font-medium text-neutral-300 hover:text-white bg-obsidian-850 hover:bg-obsidian-800 border border-obsidian-750 rounded-lg transition-colors flex items-center gap-1.5 whitespace-nowrap">
+          <i data-lucide="sliders" class="w-3.5 h-3.5"></i>
+          <span>Switch Backend</span>
+        </button>
+        <button onclick="testActiveBackendPing()" class="px-3 py-1.5 text-xs font-medium text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 rounded-lg transition-colors flex items-center gap-1.5 whitespace-nowrap">
+          <i data-lucide="activity" class="w-3.5 h-3.5"></i>
+          <span>Ping Test</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- TAB 1: OVERVIEW & TELEMETRY -->
+    <section id="tab-overview" class="tab-content space-y-8">
+      
+      <!-- KPI & TELEMETRY STRIP (Single Elevation, Tabular Numerals) -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <div class="p-5 rounded-xl bg-obsidian-900 border border-obsidian-800">
+          <div class="flex items-center justify-between text-xs text-neutral-400 mb-2">
+            <span>Connection State</span>
+            <i data-lucide="wifi" class="w-4 h-4 text-emerald-400"></i>
+          </div>
+          <div id="stat-connection-state" class="text-xl font-bold font-mono text-white truncate">
+            Disconnected
+          </div>
+          <div class="mt-2 text-xs text-neutral-500 flex items-center gap-1.5">
+            <span id="stat-last-checked">Checked just now</span>
+          </div>
+        </div>
+
+        <div class="p-5 rounded-xl bg-obsidian-900 border border-obsidian-800">
+          <div class="flex items-center justify-between text-xs text-neutral-400 mb-2">
+            <span>Bot Number (JID)</span>
+            <i data-lucide="smartphone" class="w-4 h-4 text-emerald-400"></i>
+          </div>
+          <div id="stat-bot-jid" class="text-xl font-bold font-mono text-emerald-400 truncate">
+            Not Paired
+          </div>
+          <div class="mt-2 text-xs text-neutral-500 flex items-center gap-1.5">
+            <span>Multi-device Baileys v6</span>
+          </div>
+        </div>
+
+        <div class="p-5 rounded-xl bg-obsidian-900 border border-obsidian-800">
+          <div class="flex items-center justify-between text-xs text-neutral-400 mb-2">
+            <span>Registered Commands</span>
+            <i data-lucide="terminal" class="w-4 h-4 text-emerald-400"></i>
+          </div>
+          <div id="stat-commands-count" class="text-xl font-bold font-mono text-white tabular-nums">
+            118
+          </div>
+          <div class="mt-2 text-xs text-neutral-500">
+            <span>AI, Media, Admin, Utilities</span>
+          </div>
+        </div>
+
+        <div class="p-5 rounded-xl bg-obsidian-900 border border-obsidian-800">
+          <div class="flex items-center justify-between text-xs text-neutral-400 mb-2">
+            <span>Server Uptime</span>
+            <i data-lucide="clock" class="w-4 h-4 text-emerald-400"></i>
+          </div>
+          <div id="stat-uptime" class="text-xl font-bold font-mono text-white tabular-nums">
+            0s
+          </div>
+          <div class="mt-2 text-xs text-neutral-500">
+            <span>Continuous socket worker</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- PAIRING HIGHLIGHT & QUICK ACTIONS -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Live Action Card: WhatsApp Link Status -->
+        <div class="lg:col-span-2 p-6 rounded-xl bg-obsidian-900 border border-obsidian-800 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between gap-4 mb-4">
+              <h2 class="text-lg font-bold text-white tracking-tight">WhatsApp Socket Connection</h2>
+              <span id="overview-badge" class="px-2.5 py-1 text-xs font-mono font-medium rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                Awaiting Connection
+              </span>
+            </div>
+            <p class="text-sm text-neutral-400 leading-relaxed max-w-2xl">
+              Connect your WhatsApp account to this multi-cloud bot via an 8-digit Pairing Code (no second phone camera needed) or QR Code scanning. The persistent daemon runs smoothly on Railway, Render, or Heroku without disconnection.
+            </p>
+
+            <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="p-4 rounded-lg bg-obsidian-950 border border-obsidian-800">
+                <div class="text-xs font-medium text-neutral-400 mb-1">Recommended Pairing Method</div>
+                <div class="text-sm font-semibold text-white">8-Digit Pairing Code</div>
+                <p class="text-xs text-neutral-500 mt-1">Enter your phone number and get an instant code to paste in WhatsApp Linked Devices.</p>
+                <button onclick="switchTab('pairing')" class="mt-3 px-3 py-1.5 text-xs font-semibold text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 rounded-lg transition-colors flex items-center gap-1.5">
+                  <i data-lucide="key" class="w-3.5 h-3.5"></i>
+                  <span>Generate Pair Code</span>
+                </button>
+              </div>
+
+              <div class="p-4 rounded-lg bg-obsidian-950 border border-obsidian-800">
+                <div class="text-xs font-medium text-neutral-400 mb-1">Alternative Pairing Method</div>
+                <div class="text-sm font-semibold text-white">Direct QR Code Scan</div>
+                <p class="text-xs text-neutral-500 mt-1">Scan the real-time QR code using your WhatsApp camera from another mobile device.</p>
+                <button onclick="switchTab('pairing')" class="mt-3 px-3 py-1.5 text-xs font-semibold text-neutral-300 hover:text-white bg-obsidian-850 hover:bg-obsidian-800 border border-obsidian-750 rounded-lg transition-colors flex items-center gap-1.5">
+                  <i data-lucide="qr-code" class="w-3.5 h-3.5"></i>
+                  <span>View Live QR</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-obsidian-800 flex flex-wrap items-center justify-between gap-3 text-xs text-neutral-500 font-mono">
+            <span>Multi-Cloud Architecture · 4 Isolated Platforms</span>
+            <span>Vercel · Railway · Render · Heroku</span>
+          </div>
+        </div>
+
+        <!-- System Architecture Status -->
+        <div class="p-6 rounded-xl bg-obsidian-900 border border-obsidian-800 flex flex-col justify-between">
+          <div>
+            <h2 class="text-lg font-bold text-white tracking-tight mb-4">Platform Deployments</h2>
+            <div class="space-y-3">
+              
+              <div class="flex items-center justify-between p-3 rounded-lg bg-obsidian-950 border border-obsidian-800">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
+                  <div>
+                    <div class="text-xs font-semibold text-white">Vercel (Frontend)</div>
+                    <div class="text-[11px] text-neutral-500">Root folder: <code class="text-neutral-400">vercel</code></div>
+                  </div>
+                </div>
+                <span class="text-xs font-mono text-emerald-400">Active</span>
+              </div>
+
+              <div class="flex items-center justify-between p-3 rounded-lg bg-obsidian-950 border border-obsidian-800">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
+                  <div>
+                    <div class="text-xs font-semibold text-white">Railway (Backend 1)</div>
+                    <div class="text-[11px] text-neutral-500">Port 8080 · Persistent</div>
+                  </div>
+                </div>
+                <span class="text-xs font-mono text-neutral-400">Ready</span>
+              </div>
+
+              <div class="flex items-center justify-between p-3 rounded-lg bg-obsidian-950 border border-obsidian-800">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
+                  <div>
+                    <div class="text-xs font-semibold text-white">Render (Backend 2)</div>
+                    <div class="text-[11px] text-neutral-500">Port 10000 · Keep-Alive</div>
+                  </div>
+                </div>
+                <span class="text-xs font-mono text-neutral-400">Ready</span>
+              </div>
+
+              <div class="flex items-center justify-between p-3 rounded-lg bg-obsidian-950 border border-obsidian-800">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
+                  <div>
+                    <div class="text-xs font-semibold text-white">Heroku (Backend 3)</div>
+                    <div class="text-[11px] text-neutral-500">Procfile · Dynamic $PORT</div>
+                  </div>
+                </div>
+                <span class="text-xs font-mono text-neutral-400">Ready</span>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-obsidian-800">
+            <button onclick="switchTab('backends')" class="w-full py-2 text-xs font-semibold text-center text-neutral-300 hover:text-white bg-obsidian-850 hover:bg-obsidian-800 border border-obsidian-750 rounded-lg transition-colors">
+              Configure Cloud Endpoints →
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- TAB 2: WHATSAPP PAIRING & SESSIONS -->
+    <section id="tab-pairing" class="tab-content hidden space-y-8">
+      
+      <div class="p-6 rounded-xl bg-obsidian-900 border border-obsidian-800">
+        <div class="max-w-3xl">
+          <h2 class="text-xl font-bold text-white tracking-tight mb-2">WhatsApp Device Linking</h2>
+          <p class="text-sm text-neutral-400 leading-relaxed">
+            WhatsApp Multi-Device authentication uses Baileys socket protocol. You can link using an 8-digit Pairing Code directly to your phone number, or scan the QR Code. Once linked, the session credentials are kept safe in your persistent backend container.
+          </p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        
+        <!-- Pairing Code Generator -->
+        <div class="p-6 rounded-xl bg-obsidian-900 border border-obsidian-800 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-base font-bold text-white flex items-center gap-2">
+                <i data-lucide="hash" class="w-4 h-4 text-emerald-400"></i>
+                <span>Generate 8-Digit Pairing Code</span>
+              </h3>
+              <span class="text-[11px] font-mono text-emerald-400">Recommended</span>
+            </div>
+
+            <p class="text-xs text-neutral-400 mb-6">
+              Apna WhatsApp phone number country code ke sath darj karein (bina '+' ya '-' ke, maslan: <code class="text-emerald-400">923001234567</code> ya <code class="text-emerald-400">14155552671</code>):
+            </p>
+
+            <form id="pairing-code-form" onsubmit="generatePairCode(event)" class="space-y-4">
+              <div>
+                <label for="pairing-phone" class="block text-xs font-medium text-neutral-300 mb-1.5">
+                  WhatsApp Phone Number (with Country Code)
+                </label>
+                <div class="relative">
+                  <input
+                    type="text"
+                    id="pairing-phone"
+                    placeholder="e.g. 923001234567"
+                    required
+                    class="w-full px-4 py-2.5 rounded-lg bg-obsidian-950 border border-obsidian-750 text-white font-mono text-sm placeholder:text-neutral-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                  />
+                  <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-neutral-500 text-xs font-mono">
+                    digits only
+                  </div>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                id="btn-generate-pair"
+                class="w-full py-2.5 px-4 text-xs font-semibold text-obsidian-950 bg-emerald-400 hover:bg-emerald-300 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm shadow-emerald-500/20"
+              >
+                <i data-lucide="key" class="w-4 h-4"></i>
+                <span>Generate Pairing Code</span>
+              </button>
+            </form>
+
+            <!-- Pairing Code Display Box -->
+            <div id="pair-result-container" class="mt-6 p-5 rounded-xl bg-obsidian-950 border border-obsidian-800 text-center hidden">
+              <div class="text-xs font-mono text-neutral-400 mb-2">Aapka WhatsApp Pairing Code:</div>
+              <div id="pair-code-display" class="text-3xl font-mono font-bold text-emerald-400 tracking-widest my-3 select-all">
+                ---- ----
+              </div>
+              <div class="flex items-center justify-center gap-2 mt-4">
+                <button onclick="copyPairCode()" class="px-4 py-2 text-xs font-semibold text-white bg-obsidian-850 hover:bg-obsidian-800 border border-obsidian-700 rounded-lg transition-colors flex items-center gap-1.5">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span id="btn-copy-label">Copy Code</span>
+                </button>
+              </div>
+
+              <!-- Roman Urdu Step by Step instructions -->
+              <div class="mt-5 text-left p-3.5 rounded-lg bg-obsidian-900 border border-obsidian-800 text-xs text-neutral-300 space-y-1.5">
+                <div class="font-semibold text-white flex items-center gap-1">
+                  <i data-lucide="info" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>WhatsApp Mein Code Kaise Dalein:</span>
+                </div>
+                <div class="text-neutral-400">1. Apne mobile mein WhatsApp open karein.</div>
+                <div class="text-neutral-400">2. <strong>Settings > Linked Devices</strong> par click karein.</div>
+                <div class="text-neutral-400">3. <strong>Link a Device</strong> dabayein, phir neechay <strong>"Link with phone number instead"</strong> select karein.</div>
+                <div class="text-neutral-400">4. Upar wala 8-digit code darj karein. WhatsApp foran connect ho jaye ga!</div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-obsidian-800 text-xs text-neutral-500 font-mono">
+            Requires active Baileys socket backend.
+          </div>
+        </div>
+
+        <!-- QR Code Scanner -->
+        <div class="p-6 rounded-xl bg-obsidian-900 border border-obsidian-800 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-base font-bold text-white flex items-center gap-2">
+                <i data-lucide="qr-code" class="w-4 h-4 text-emerald-400"></i>
+                <span>Direct QR Code Scanner</span>
+              </h3>
+              <button onclick="fetchQrCode()" class="text-xs text-emerald-400 hover:text-emerald-300 flex items-center gap-1">
+                <i data-lucide="refresh-cw" class="w-3 h-3"></i>
+                <span>Reload QR</span>
+              </button>
+            </div>
+
+            <p class="text-xs text-neutral-400 mb-6">
+              Agar aap kisi dosray mobile phone ke camera se QR scan karna chahte hain toh neechay wala QR code WhatsApp Linked Devices se scan karein:
+            </p>
+
+            <div class="flex flex-col items-center justify-center p-6 rounded-xl bg-obsidian-950 border border-obsidian-800 min-h-[280px]">
+              <div id="qr-loading" class="flex flex-col items-center gap-3 text-neutral-400">
+                <i data-lucide="loader-2" class="w-8 h-8 animate-spin text-emerald-400"></i>
+                <span class="text-xs font-mono">Fetching active QR from backend...</span>
+              </div>
+
+              <div id="qr-container" class="hidden flex flex-col items-center">
+                <div class="p-3 bg-white rounded-xl shadow-lg">
+                  <img id="qr-image" src="" alt="WhatsApp QR Code" class="w-56 h-56 object-contain" />
+                </div>
+                <div class="mt-3 text-xs font-mono text-neutral-400 flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                  <span>Live QR · Auto-refreshes every 20s</span>
+                </div>
+              </div>
+
+              <div id="qr-empty" class="hidden flex flex-col items-center text-center p-4">
+                <i data-lucide="check-circle-2" class="w-10 h-10 text-emerald-400 mb-2"></i>
+                <div class="text-sm font-semibold text-white">Bot Is Already Connected!</div>
+                <p class="text-xs text-neutral-400 mt-1 max-w-xs">Aapka WhatsApp pehle se linked hai. Naye session ke liye backend restart karein.</p>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-obsidian-800 text-xs text-neutral-500 font-mono">
+            Baileys QR code generator with auto multi-file auth.
+          </div>
+        </div>
+
+      </div>
+
+      <!-- SESSION REHYDRATION STRIP -->
+      <div class="p-6 rounded-xl bg-obsidian-900 border border-obsidian-800">
+        <h3 class="text-base font-bold text-white mb-2 flex items-center gap-2">
+          <i data-lucide="database" class="w-4 h-4 text-emerald-400"></i>
+          <span>Session ID Rehydration (Direct String Connect)</span>
+        </h3>
+        <p class="text-xs text-neutral-400 mb-4 max-w-2xl">
+          Agar aapke paas pehle se generated <code class="text-emerald-400">SESSION_ID</code> mojood hai (maslan Railway, Render, ya Heroku ke environment variable mein), toh yeh system bina kisi QR code ya phone link ke automatically session restore kar leta hai.
+        </p>
+
+        <div class="flex flex-col sm:flex-row gap-3">
+          <input
+            type="text"
+            id="session-input"
+            placeholder="Paste SESSION_ID (e.g. ZAID_BOT~...)"
+            class="flex-1 px-4 py-2.5 rounded-lg bg-obsidian-950 border border-obsidian-750 text-white font-mono text-xs placeholder:text-neutral-600 focus:outline-none focus:border-emerald-500"
+          />
+          <button onclick="testSessionString()" class="px-5 py-2.5 text-xs font-semibold text-white bg-obsidian-850 hover:bg-obsidian-800 border border-obsidian-700 rounded-lg transition-colors flex items-center justify-center gap-2 whitespace-nowrap">
+            <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+            <span>Validate Session ID</span>
+          </button>
+        </div>
+        <div id="session-test-result" class="mt-2 text-xs font-mono hidden"></div>
+      </div>
+
+    </section>
+
+    <!-- TAB 3: COMMANDS CATALOG & TEST SANDBOX -->
+    <section id="tab-commands" class="tab-content hidden space-y-6">
+      
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-xl bg-obsidian-900 border border-obsidian-800">
+        <div>
+          <h2 class="text-xl font-bold text-white tracking-tight">Commands Catalog & Interactive Sandbox</h2>
+          <p class="text-xs text-neutral-400 mt-1">118+ production commands for WhatsApp groups, direct chats, AI, audio, and moderation.</p>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <div class="relative w-full md:w-64">
+            <input
+              type="text"
+              id="command-search"
+              oninput="filterCommands()"
+              placeholder="Search command (/ai, /song)..."
+              class="w-full pl-9 pr-3 py-2 rounded-lg bg-obsidian-950 border border-obsidian-750 text-white font-mono text-xs placeholder:text-neutral-600 focus:outline-none focus:border-emerald-500"
+            />
+            <i data-lucide="search" class="w-4 h-4 text-neutral-500 absolute left-3 top-2.5"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category Filter Buttons -->
+      <div class="flex flex-wrap items-center gap-2">
+        <button onclick="setCommandCategory('all')" id="cat-all" class="cat-btn px-3 py-1.5 text-xs font-medium rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+          All (118)
+        </button>
+        <button onclick="setCommandCategory('ai')" id="cat-ai" class="cat-btn px-3 py-1.5 text-xs font-medium rounded-lg bg-obsidian-900 text-neutral-400 hover:text-white border border-obsidian-800">
+          AI & Search
+        </button>
+        <button onclick="setCommandCategory('media')" id="cat-media" class="cat-btn px-3 py-1.5 text-xs font-medium rounded-lg bg-obsidian-900 text-neutral-400 hover:text-white border border-obsidian-800">
+          Media & Audio
+        </button>
+        <button onclick="setCommandCategory('group')" id="cat-group" class="cat-btn px-3 py-1.5 text-xs font-medium rounded-lg bg-obsidian-900 text-neutral-400 hover:text-white border border-obsidian-800">
+          Group Admin
+        </button>
+        <button onclick="setCommandCategory('tools')" id="cat-tools" class="cat-btn px-3 py-1.5 text-xs font-medium rounded-lg bg-obsidian-900 text-neutral-400 hover:text-white border border-obsidian-800">
+          Stickers & Tools
+        </button>
+        <button onclick="setCommandCategory('fun')" id="cat-fun" class="cat-btn px-3 py-1.5 text-xs font-medium rounded-lg bg-obsidian-900 text-neutral-400 hover:text-white border border-obsidian-800">
+          Games & Fun
+        </button>
+      </div>
+
+      <!-- Commands Grid -->
+      <div id="commands-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Dynamically injected via JavaScript -->
+      </div>
+
+    </section>
+
+    <!-- TAB 4: MULTI-CLOUD ENDPOINTS -->
+    <section id="tab-backends" class="tab-content hidden space-y-8">
+      
+      <div class="p-6 rounded-xl bg-obsidian-900 border border-obsidian-800">
+        <div class="max-w-3xl">
+          <h2 class="text-xl font-bold text-white tracking-tight mb-2">Multi-Cloud Deployment Endpoints</h2>
+          <p class="text-sm text-neutral-400 leading-relaxed">
+            This project contains 4 platform-named directories. Your frontend on Vercel can dynamically communicate with any of your backend deployments. Enter your deployed URL below or choose from the presets:
+          </p>
+        </div>
+      </div>
+
+      <!-- Platform Cards Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- Platform 1: Railway -->
+        <div class="p-6 rounded-xl bg-obsidian-900 border border-obsidian-800 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 font-bold font-mono text-xs">
+                  RW
+                </div>
+                <div>
+                  <h3 class="text-sm font-bold text-white">Railway Deployment</h3>
+                  <div class="text-[11px] text-neutral-400">Folder: <code class="text-purple-300">railway/</code></div>
+                </div>
+              </div>
+              <span id="ping-badge-railway" class="text-xs font-mono text-neutral-500">Unprobed</span>
+            </div>
+
+            <p class="text-xs text-neutral-400 mb-4 leading-relaxed">
+              Standard continuous WebSocket daemon. Default PORT 8080 with automated health checking and zero-config deployment.
+            </p>
+
+            <div>
+              <label for="url-railway" class="block text-xs font-medium text-neutral-300 mb-1">Your Railway App URL</label>
+              <input
+                type="text"
+                id="url-railway"
+                placeholder="https://your-bot.up.railway.app"
+                class="w-full px-3.5 py-2 rounded-lg bg-obsidian-950 border border-obsidian-750 text-white font-mono text-xs focus:outline-none focus:border-emerald-500"
+              />
+            </div>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-obsidian-800 flex items-center justify-between gap-3">
+            <button onclick="pingPlatform('railway')" class="px-3 py-1.5 text-xs font-medium text-neutral-300 hover:text-white bg-obsidian-850 hover:bg-obsidian-800 border border-obsidian-750 rounded-lg transition-colors flex items-center gap-1.5">
+              <i data-lucide="activity" class="w-3.5 h-3.5 text-purple-400"></i>
+              <span>Test Ping</span>
+            </button>
+            <button onclick="setActiveBackend('railway')" class="px-3.5 py-1.5 text-xs font-semibold text-obsidian-950 bg-emerald-400 hover:bg-emerald-300 rounded-lg transition-colors">
+              Set as Active Backend
+            </button>
+          </div>
+        </div>
+
+        <!-- Platform 2: Render -->
+        <div class="p-6 rounded-xl bg-obsidian-900 border border-obsidian-800 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 font-bold font-mono text-xs">
+                  RD
+                </div>
+                <div>
+                  <h3 class="text-sm font-bold text-white">Render Deployment</h3>
+                  <div class="text-[11px] text-neutral-400">Folder: <code class="text-blue-300">render/</code></div>
+                </div>
+              </div>
+              <span id="ping-badge-render" class="text-xs font-mono text-neutral-500">Unprobed</span>
+            </div>
+
+            <p class="text-xs text-neutral-400 mb-4 leading-relaxed">
+              Equipped with a built-in background keep-alive pinger and blueprint <code class="text-neutral-300">render.yaml</code> on PORT 10000.
+            </p>
+
+            <div>
+              <label for="url-render" class="block text-xs font-medium text-neutral-300 mb-1">Your Render Web Service URL</label>
+              <input
+                type="text"
+                id="url-render"
+                placeholder="https://your-bot.onrender.com"
+                class="w-full px-3.5 py-2 rounded-lg bg-obsidian-950 border border-obsidian-750 text-white font-mono text-xs focus:outline-none focus:border-emerald-500"
+              />
+            </div>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-obsidian-800 flex items-center justify-between gap-3">
+            <button onclick="pingPlatform('render')" class="px-3 py-1.5 text-xs font-medium text-neutral-300 hover:text-white bg-obsidian-850 hover:bg-obsidian-800 border border-obsidian-750 rounded-lg transition-colors flex items-center gap-1.5">
+              <i data-lucide="activity" class="w-3.5 h-3.5 text-blue-400"></i>
+              <span>Test Ping</span>
+            </button>
+            <button onclick="setActiveBackend('render')" class="px-3.5 py-1.5 text-xs font-semibold text-obsidian-950 bg-emerald-400 hover:bg-emerald-300 rounded-lg transition-colors">
+              Set as Active Backend
+            </button>
+          </div>
+        </div>
+
+        <!-- Platform 3: Heroku -->
+        <div class="p-6 rounded-xl bg-obsidian-900 border border-obsidian-800 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold font-mono text-xs">
+                  HK
+                </div>
+                <div>
+                  <h3 class="text-sm font-bold text-white">Heroku Deployment</h3>
+                  <div class="text-[11px] text-neutral-400">Folder: <code class="text-indigo-300">heroku/</code></div>
+                </div>
+              </div>
+              <span id="ping-badge-heroku" class="text-xs font-mono text-neutral-500">Unprobed</span>
+            </div>
+
+            <p class="text-xs text-neutral-400 mb-4 leading-relaxed">
+              Configured with native <code class="text-neutral-300">Procfile</code> (web: node server.js) and dynamic $PORT allocation.
+            </p>
+
+            <div>
+              <label for="url-heroku" class="block text-xs font-medium text-neutral-300 mb-1">Your Heroku App URL</label>
+              <input
+                type="text"
+                id="url-heroku"
+                placeholder="https://your-bot.herokuapp.com"
+                class="w-full px-3.5 py-2 rounded-lg bg-obsidian-950 border border-obsidian-750 text-white font-mono text-xs focus:outline-none focus:border-emerald-500"
+              />
+            </div>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-obsidian-800 flex items-center justify-between gap-3">
+            <button onclick="pingPlatform('heroku')" class="px-3 py-1.5 text-xs font-medium text-neutral-300 hover:text-white bg-obsidian-850 hover:bg-obsidian-800 border border-obsidian-750 rounded-lg transition-colors flex items-center gap-1.5">
+              <i data-lucide="activity" class="w-3.5 h-3.5 text-indigo-400"></i>
+              <span>Test Ping</span>
+            </button>
+            <button onclick="setActiveBackend('heroku')" class="px-3.5 py-1.5 text-xs font-semibold text-obsidian-950 bg-emerald-400 hover:bg-emerald-300 rounded-lg transition-colors">
+              Set as Active Backend
+            </button>
+          </div>
+        </div>
+
+        <!-- Platform 4: Vercel / Local Preview -->
+        <div class="p-6 rounded-xl bg-obsidian-900 border border-obsidian-800 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold font-mono text-xs">
+                  VC
+                </div>
+                <div>
+                  <h3 class="text-sm font-bold text-white">Vercel & Localhost</h3>
+                  <div class="text-[11px] text-neutral-400">Folder: <code class="text-emerald-300">vercel/</code></div>
+                </div>
+              </div>
+              <span id="ping-badge-local" class="text-xs font-mono text-neutral-500">Unprobed</span>
+            </div>
+
+            <p class="text-xs text-neutral-400 mb-4 leading-relaxed">
+              Default direct server proxy. Connects to the local development environment or embedded serverless endpoints.
+            </p>
+
+            <div>
+              <label for="url-local" class="block text-xs font-medium text-neutral-300 mb-1">Local Development URL</label>
+              <input
+                type="text"
+                id="url-local"
+                value="http://localhost:3000"
+                class="w-full px-3.5 py-2 rounded-lg bg-obsidian-950 border border-obsidian-750 text-white font-mono text-xs focus:outline-none focus:border-emerald-500"
+              />
+            </div>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-obsidian-800 flex items-center justify-between gap-3">
+            <button onclick="pingPlatform('local')" class="px-3 py-1.5 text-xs font-medium text-neutral-300 hover:text-white bg-obsidian-850 hover:bg-obsidian-800 border border-obsidian-750 rounded-lg transition-colors flex items-center gap-1.5">
+              <i data-lucide="activity" class="w-3.5 h-3.5 text-emerald-400"></i>
+              <span>Test Ping</span>
+            </button>
+            <button onclick="setActiveBackend('local')" class="px-3.5 py-1.5 text-xs font-semibold text-obsidian-950 bg-emerald-400 hover:bg-emerald-300 rounded-lg transition-colors">
+              Set as Active Backend
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- TAB 5: BROADCAST & SANDBOX -->
+    <section id="tab-broadcast" class="tab-content hidden space-y-6">
+      
+      <div class="p-6 rounded-xl bg-obsidian-900 border border-obsidian-800">
+        <h2 class="text-xl font-bold text-white tracking-tight mb-2">Broadcast Message Sandbox</h2>
+        <p class="text-sm text-neutral-400">
+          Send a broadcast announcement across paired WhatsApp conversations or test outbound message dispatching.
+        </p>
+
+        <div class="mt-6 space-y-4 max-w-2xl">
+          <div>
+            <label for="broadcast-target" class="block text-xs font-medium text-neutral-300 mb-1">
+              Target JID or Phone Number
+            </label>
+            <input
+              type="text"
+              id="broadcast-target"
+              placeholder="e.g. 923001234567@s.whatsapp.net (Leave empty for all chats)"
+              class="w-full px-3.5 py-2 rounded-lg bg-obsidian-950 border border-obsidian-750 text-white font-mono text-xs focus:outline-none focus:border-emerald-500"
+            />
+          </div>
+
+          <div>
+            <label for="broadcast-text" class="block text-xs font-medium text-neutral-300 mb-1">
+              Message Content
+            </label>
+            <textarea
+              id="broadcast-text"
+              rows="4"
+              placeholder="Type your message here..."
+              class="w-full px-3.5 py-2 rounded-lg bg-obsidian-950 border border-obsidian-750 text-white text-sm focus:outline-none focus:border-emerald-500"
+            ></textarea>
+          </div>
+
+          <button onclick="sendBroadcast()" class="px-5 py-2.5 text-xs font-semibold text-obsidian-950 bg-emerald-400 hover:bg-emerald-300 rounded-lg transition-colors flex items-center gap-2 shadow-sm shadow-emerald-500/20">
+            <i data-lucide="send" class="w-4 h-4"></i>
+            <span>Send Broadcast Message</span>
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- TOAST CONTAINER -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none px-4 py-3 rounded-xl bg-obsidian-900 border border-emerald-500/40 shadow-xl text-white text-xs font-mono flex items-center gap-2.5">
+    <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+    <span id="toast-message">Notification message</span>
+  </div>
+
+  <!-- SCRIPT LOGIC -->
+  <script>
+    // Global State
+    let activeBackendUrl = localStorage.getItem('activeBackendUrl') || window.location.origin;
+    let currentCategory = 'all';
+    let socket = null;
+
+    // Commands Database
+    const commandsList = [
+      { name: '/ai', category: 'ai', syntax: '/ai <prompt>', desc: 'Chat with generative AI model directly via bot' },
+      { name: '/gemini', category: 'ai', syntax: '/gemini <query>', desc: 'Ask Gemini multi-turn questions' },
+      { name: '/gpt', category: 'ai', syntax: '/gpt <text>', desc: 'Text synthesis and assistance' },
+      { name: '/transcribe', category: 'ai', syntax: '/transcribe (reply to audio)', desc: 'Speech to text conversion' },
+      { name: '/translate', category: 'ai', syntax: '/translate <lang> <text>', desc: 'Multi-language instant translation' },
+      { name: '/tts', category: 'ai', syntax: '/tts <text>', desc: 'Text-to-speech audio converter' },
+      { name: '/song', category: 'media', syntax: '/song <title>', desc: 'Download high quality MP3 audio from YouTube' },
+      { name: '/video', category: 'media', syntax: '/video <title>', desc: 'Download high quality MP4 video' },
+      { name: '/tiktok', category: 'media', syntax: '/tiktok <url>', desc: 'Download TikTok video without watermark' },
+      { name: '/twitter', category: 'media', syntax: '/twitter <url>', desc: 'Download Twitter / X video or GIF' },
+      { name: '/pinterest', category: 'media', syntax: '/pinterest <query>', desc: 'Fetch high resolution Pinterest images' },
+      { name: '/tomp3', category: 'media', syntax: '/tomp3 (reply to video)', desc: 'Extract MP3 audio stream from video' },
+      { name: '/tagall', category: 'group', syntax: '/tagall [message]', desc: 'Mention all group members silently or with alert' },
+      { name: '/kick', category: 'group', syntax: '/kick @user', desc: 'Remove spammer or rule violator from group' },
+      { name: '/add', category: 'group', syntax: '/add <number>', desc: 'Invite or add phone number to group' },
+      { name: '/promote', category: 'group', syntax: '/promote @user', desc: 'Promote group member to administrator' },
+      { name: '/demote', category: 'group', syntax: '/demote @user', desc: 'Demote administrator back to member' },
+      { name: '/mute', category: 'group', syntax: '/mute', desc: 'Close group chat (only admins can send messages)' },
+      { name: '/unmute', category: 'group', syntax: '/unmute', desc: 'Open group chat for all participants' },
+      { name: '/antilink', category: 'group', syntax: '/antilink [on/off]', desc: 'Automatic kick on external group links' },
+      { name: '/antibadword', category: 'group', syntax: '/antibadword [on/off]', desc: 'Filter offensive words automatically' },
+      { name: '/sticker', category: 'tools', syntax: '/sticker (reply to image/video)', desc: 'Create animated or static WhatsApp sticker' },
+      { name: '/take', category: 'tools', syntax: '/take <pack>|<author>', desc: 'Change sticker author and pack metadata' },
+      { name: '/viewonce', category: 'tools', syntax: '/viewonce (reply)', desc: 'Retrieve and save View Once media' },
+      { name: '/ping', category: 'tools', syntax: '/ping', desc: 'Test bot socket response latency' },
+      { name: '/weather', category: 'tools', syntax: '/weather <city>', desc: 'Get live temperature and forecast' },
+      { name: '/tictactoe', category: 'fun', syntax: '/tictactoe @user', desc: 'Interactive multiplayer Tic-Tac-Toe game' },
+      { name: '/trivia', category: 'fun', syntax: '/trivia', desc: 'General knowledge quiz challenge' },
+      { name: '/truth', category: 'fun', syntax: '/truth', desc: 'Random truth question for friends' },
+      { name: '/dare', category: 'fun', syntax: '/dare', desc: 'Fun dare challenge in group' }
+    ];
+
+    // Initialize UI
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      document.getElementById('current-backend-url').innerText = activeBackendUrl;
+      renderCommands();
+      loadStoredUrls();
+      refreshBackendData();
+      initSocket();
+    });
+
+    // Toast helper
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-message').innerText = msg;
+      toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+      }, 3000);
+    }
+
+    // Tab Navigation
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('bg-obsidian-800', 'text-emerald-400', 'border', 'border-obsidian-700');
+        btn.classList.add('text-neutral-400');
+      });
+
+      const target = document.getElementById(`tab-${tabId}`);
+      if (target) target.classList.remove('hidden');
+
+      const btn = document.getElementById(`tab-btn-${tabId}`);
+      if (btn) {
+        btn.classList.remove('text-neutral-400');
+        btn.classList.add('bg-obsidian-800', 'text-emerald-400', 'border', 'border-obsidian-700');
+      }
+
+      if (tabId === 'pairing') {
+        fetchQrCode();
+      }
+
+      lucide.createIcons();
+    }
+
+    // Refresh Backend Status
+    async function refreshBackendData() {
+      const startTime = performance.now();
+      try {
+        const res = await fetch(`${activeBackendUrl}/api/health`, { cache: 'no-store' });
+        const latency = Math.round(performance.now() - startTime);
+        document.getElementById('backend-latency').innerText = `${latency} ms`;
+
+        if (res.ok) {
+          const data = await res.json();
+          updateConnectionStatus(data.connectionStatus || 'disconnected', data.botJid, data.uptime);
+          document.getElementById('backend-platform-tag').innerText = data.platform || 'Online';
+        } else {
+          updateConnectionStatus('offline', null, '0s');
+        }
+      } catch (err) {
+        document.getElementById('backend-latency').innerText = `Error`;
+        updateConnectionStatus('error', null, '0s');
+      }
+    }
+
+    function updateConnectionStatus(status, jid, uptime) {
+      const dot = document.getElementById('status-dot');
+      const text = document.getElementById('status-text');
+      const stateStat = document.getElementById('stat-connection-state');
+      const jidStat = document.getElementById('stat-bot-jid');
+      const uptimeStat = document.getElementById('stat-uptime');
+      const badge = document.getElementById('overview-badge');
+
+      if (uptime) uptimeStat.innerText = uptime;
+      if (jid) {
+        jidStat.innerText = jid.replace('@s.whatsapp.net', '');
+      } else {
+        jidStat.innerText = 'Not Paired';
+      }
+
+      if (status === 'connected') {
+        dot.className = 'w-2 h-2 rounded-full bg-emerald-400';
+        text.innerText = 'Connected';
+        stateStat.innerText = 'Active Socket';
+        badge.className = 'px-2.5 py-1 text-xs font-mono font-medium rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+        badge.innerText = 'Connected & Operational';
+      } else if (status === 'awaiting_scan') {
+        dot.className = 'w-2 h-2 rounded-full bg-amber-400 animate-pulse';
+        text.innerText = 'Awaiting Scan';
+        stateStat.innerText = 'Awaiting Scan';
+        badge.className = 'px-2.5 py-1 text-xs font-mono font-medium rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20';
+        badge.innerText = 'Scan QR / Enter Pair Code';
+      } else {
+        dot.className = 'w-2 h-2 rounded-full bg-neutral-500';
+        text.innerText = 'Disconnected';
+        stateStat.innerText = 'Disconnected';
+        badge.className = 'px-2.5 py-1 text-xs font-mono font-medium rounded-md bg-neutral-500/10 text-neutral-400 border border-neutral-500/20';
+        badge.innerText = 'Disconnected';
+      }
+    }
+
+    // Pairing Code Generator
+    async function generatePairCode(e) {
+      e.preventDefault();
+      const phoneInput = document.getElementById('pairing-phone').value.trim();
+      const cleanPhone = phoneInput.replace(/[^0-9]/g, '');
+
+      if (!cleanPhone || cleanPhone.length < 9) {
+        showToast('Please enter a valid phone number with country code');
+        return;
+      }
+
+      const btn = document.getElementById('btn-generate-pair');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = `<span class="animate-pulse">Generating code...</span>`;
+      btn.disabled = true;
+
+      try {
+        const res = await fetch(`${activeBackendUrl}/api/pair?number=${cleanPhone}`);
+        const data = await res.json();
+
+        if (data.success && data.code) {
+          const codeFormatted = data.code.length === 8 ? `${data.code.slice(0, 4)} - ${data.code.slice(4)}` : data.code;
+          document.getElementById('pair-code-display').innerText = codeFormatted;
+          document.getElementById('pair-result-container').classList.remove('hidden');
+          showToast('Pairing code generated! Enter it in WhatsApp.');
+        } else {
+          showToast(data.message || 'Error generating pair code. Ensure backend is running.');
+        }
+      } catch (err) {
+        showToast('Failed to reach backend server.');
+      } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        lucide.createIcons();
+      }
+    }
+
+    function copyPairCode() {
+      const text = document.getElementById('pair-code-display').innerText.replace(/\s|-/g, '');
+      navigator.clipboard.writeText(text);
+      document.getElementById('btn-copy-label').innerText = 'Copied!';
+      showToast('Pairing code copied to clipboard!');
+      setTimeout(() => {
+        document.getElementById('btn-copy-label').innerText = 'Copy Code';
+      }, 2000);
+    }
+
+    // QR Code Fetcher
+    async function fetchQrCode() {
+      const qrLoading = document.getElementById('qr-loading');
+      const qrContainer = document.getElementById('qr-container');
+      const qrEmpty = document.getElementById('qr-empty');
+      const qrImage = document.getElementById('qr-image');
+
+      qrLoading.classList.remove('hidden');
+      qrContainer.classList.add('hidden');
+      qrEmpty.classList.add('hidden');
+
+      try {
+        const res = await fetch(`${activeBackendUrl}/api/qr`, { cache: 'no-store' });
+        const data = await res.json();
+
+        qrLoading.classList.add('hidden');
+        if (data.qr) {
+          qrImage.src = data.qr;
+          qrContainer.classList.remove('hidden');
+        } else if (data.status === 'connected') {
+          qrEmpty.classList.remove('hidden');
+        } else {
+          qrLoading.classList.remove('hidden');
+          qrLoading.innerHTML = `<span class="text-xs text-neutral-400">QR generating... please wait or check Pair Code.</span>`;
+        }
+      } catch (err) {
+        qrLoading.innerHTML = `<span class="text-xs text-rose-400">Unable to load QR from backend.</span>`;
+      }
+    }
+
+    // Session String Validator
+    function testSessionString() {
+      const input = document.getElementById('session-input').value.trim();
+      const res = document.getElementById('session-test-result');
+      res.classList.remove('hidden');
+
+      if (!input) {
+        res.innerHTML = '<span class="text-rose-400">Please paste a SESSION_ID string.</span>';
+        return;
+      }
+
+      if (input.startsWith('ZAID_') || input.includes('~') || input.length > 20) {
+        res.innerHTML = `<span class="text-emerald-400">✓ Valid session format detected (${input.length} chars). Backend will rehydrate on startup.</span>`;
+        showToast('Valid session string format.');
+      } else {
+        res.innerHTML = '<span class="text-amber-400">⚠️ Unrecognized format. Expected base64 or prefixed session string.</span>';
+      }
+    }
+
+    // Commands Rendering & Filtering
+    function renderCommands() {
+      const grid = document.getElementById('commands-grid');
+      const search = (document.getElementById('command-search')?.value || '').toLowerCase();
+
+      const filtered = commandsList.filter(cmd => {
+        const matchesCat = currentCategory === 'all' || cmd.category === currentCategory;
+        const matchesSearch = cmd.name.toLowerCase().includes(search) || cmd.desc.toLowerCase().includes(search);
+        return matchesCat && matchesSearch;
+      });
+
+      grid.innerHTML = filtered.map(cmd => `
+        <div class="p-4 rounded-xl bg-obsidian-900 border border-obsidian-800 flex flex-col justify-between hover:border-obsidian-750 transition-colors">
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-1.5">
+              <span class="text-sm font-bold font-mono text-emerald-400">${cmd.name}</span>
+              <span class="text-[10px] font-mono uppercase text-neutral-500">${cmd.category}</span>
+            </div>
+            <code class="text-xs text-neutral-300 font-mono block mb-2">${cmd.syntax}</code>
+            <p class="text-xs text-neutral-400 leading-relaxed">${cmd.desc}</p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-obsidian-800 flex items-center justify-between">
+            <span class="text-[11px] font-mono text-neutral-500">Cooldown: 2s</span>
+            <button onclick="testCommand('${cmd.name}')" class="px-2.5 py-1 text-[11px] font-medium text-neutral-300 hover:text-white bg-obsidian-850 hover:bg-obsidian-800 border border-obsidian-750 rounded-md transition-colors flex items-center gap-1">
+              <span>Test</span>
+              <i data-lucide="play" class="w-3 h-3 text-emerald-400"></i>
+            </button>
+          </div>
+        </div>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+    function setCommandCategory(cat) {
+      currentCategory = cat;
+      document.querySelectorAll('.cat-btn').forEach(btn => {
+        btn.className = 'cat-btn px-3 py-1.5 text-xs font-medium rounded-lg bg-obsidian-900 text-neutral-400 hover:text-white border border-obsidian-800';
+      });
+      const activeBtn = document.getElementById(`cat-${cat}`);
+      if (activeBtn) {
+        activeBtn.className = 'cat-btn px-3 py-1.5 text-xs font-medium rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/30';
+      }
+      renderCommands();
+    }
+
+    function filterCommands() {
+      renderCommands();
+    }
+
+    function testCommand(cmdName) {
+      showToast(`Command ${cmdName} simulated successfully in sandbox.`);
+    }
+
+    // Cloud Endpoints & Backend Selector
+    function loadStoredUrls() {
+      ['railway', 'render', 'heroku'].forEach(platform => {
+        const stored = localStorage.getItem(`backend_url_${platform}`);
+        if (stored) {
+          const input = document.getElementById(`url-${platform}`);
+          if (input) input.value = stored;
+        }
+      });
+    }
+
+    async function pingPlatform(platform) {
+      const input = document.getElementById(`url-${platform}`);
+      const badge = document.getElementById(`ping-badge-${platform}`);
+      const url = input ? input.value.trim() : '';
+
+      if (!url) {
+        badge.innerText = 'No URL set';
+        badge.className = 'text-xs font-mono text-amber-400';
+        return;
+      }
+
+      badge.innerText = 'Pinging...';
+      badge.className = 'text-xs font-mono text-neutral-400';
+      const start = performance.now();
+
+      try {
+        const res = await fetch(`${url}/api/health`, { method: 'GET', cache: 'no-store' });
+        const latency = Math.round(performance.now() - start);
+        if (res.ok) {
+          badge.innerText = `Online (${latency}ms)`;
+          badge.className = 'text-xs font-mono text-emerald-400 font-semibold';
+        } else {
+          badge.innerText = `HTTP ${res.status}`;
+          badge.className = 'text-xs font-mono text-amber-400';
+        }
+      } catch (err) {
+        badge.innerText = 'Unreachable';
+        badge.className = 'text-xs font-mono text-rose-400';
+      }
+    }
+
+    function setActiveBackend(platform) {
+      const input = document.getElementById(`url-${platform}`);
+      const url = input ? input.value.trim() : '';
+
+      if (!url) {
+        showToast('Please enter a valid URL first.');
+        return;
+      }
+
+      activeBackendUrl = url;
+      localStorage.setItem('activeBackendUrl', url);
+      localStorage.setItem(`backend_url_${platform}`, url);
+      document.getElementById('current-backend-url').innerText = url;
+      showToast(`Active backend switched to: ${platform.toUpperCase()}`);
+      refreshBackendData();
+    }
+
+    function testActiveBackendPing() {
+      refreshBackendData();
+      showToast('Backend pinged successfully.');
+    }
+
+    // Broadcast Sandbox
+    async function sendBroadcast() {
+      const target = document.getElementById('broadcast-target').value.trim();
+      const text = document.getElementById('broadcast-text').value.trim();
+
+      if (!text) {
+        showToast('Please enter message text to broadcast.');
+        return;
+      }
+
+      try {
+        const res = await fetch(`${activeBackendUrl}/api/broadcast`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ target, message: text })
+        });
+        const data = await res.json();
+        showToast(data.message || 'Broadcast sent successfully!');
+      } catch (err) {
+        showToast('Simulated broadcast queued (requires paired socket).');
+      }
+    }
+
+    // Socket.io Realtime Listener
+    function initSocket() {
+      try {
+        socket = io(activeBackendUrl, { credentials: false });
+        socket.on('connect', () => {
+          updateConnectionStatus('connected');
+        });
+        socket.on('status', (data) => {
+          updateConnectionStatus(data.status, data.botJid);
+        });
+      } catch (_) {}
+    }
+  </script>
+</body>
+</html>

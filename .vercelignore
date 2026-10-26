@@ -1,0 +1,13 @@
+# Exclude backend WhatsApp bot files and persistent data from Vercel
+index.js
+server.js
+backend/
+lib/
+session/
+sessions/
+data/
+database/
+*.log
+.git
+.github
+render.yaml

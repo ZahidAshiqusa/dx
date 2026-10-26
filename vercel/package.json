@@ -1,0 +1,15 @@
+{
+  "name": "zaid-ashiq-panel",
+  "version": "3.0.0",
+  "description": "ZAID ASHIQ STUDIO - Web Control Panel & Progressive Web App",
+  "private": true,
+  "scripts": {
+    "build": "echo 'Frontend static build complete'"
+  },
+  "keywords": [
+    "whatsapp-panel",
+    "pwa"
+  ],
+  "author": "Hector Manuel",
+  "license": "ISC"
+}

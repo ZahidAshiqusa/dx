@@ -1,0 +1,75 @@
+# Dependencies
+node_modules/
+*/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json.bak
+
+# WhatsApp Sessions & Auth Credentials (CRITICAL: Do NOT commit!)
+session/*
+!session/.gitkeep
+*/session/*
+!*/session/.gitkeep
+auth_info/
+*/auth_info/
+creds.json
+*/creds.json
+*session.json
+app-state-sync-key*
+pre-key*
+sender-key*
+session-*.json
+
+# Temporary media & downloads
+temp_media/*
+!temp_media/.gitkeep
+*/temp_media/*
+!*/temp_media/.gitkeep
+downloads/*
+!downloads/.gitkeep
+tmp/
+temp/
+*.tmp
+
+# Environment variables & secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+!.env.example
+!*/.env.example
+
+# Build outputs & caches
+dist/
+build/
+.cache/
+.vercel/
+.next/
+out/
+
+# Logs & databases
+*.log
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+
+# OS & Editor generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# AI Studio runtime metadata
+.aistudio/

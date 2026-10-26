@@ -1,0 +1,3 @@
+# Files to exclude from frontend Vercel deployment
+*.log
+.DS_Store

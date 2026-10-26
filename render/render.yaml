@@ -1,0 +1,33 @@
+# ==============================================================================
+# Render Blueprint Specification (render.yaml)
+# ZAID ASHIQ STUDIO - WhatsApp Bot & Tactical Control Panel Backend
+# ==============================================================================
+
+services:
+  - type: web
+    name: zaid-ashiq-bot-backend
+    runtime: node
+    plan: free
+    region: oregon # or frankfurt, singapore, ohio
+    rootDir: ./
+    buildCommand: npm install
+    startCommand: node server.js
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: SESSION_ID
+        sync: false
+      - key: CLOUDINARY_URL
+        sync: false
+      - key: GITHUB_TOKEN
+        sync: false
+      - key: GITHUB_GIST_ID
+        sync: false
+      - key: ADMIN_NUMBER
+        sync: false

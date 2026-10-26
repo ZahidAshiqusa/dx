@@ -1,0 +1,6 @@
+{
+  "name": "ZAID ASHIQ STUDIO",
+  "description": "ZAID ASHIQ STUDIO - Full-Stack WhatsApp Multi-Feature Bot & Web Control Panel",
+  "permissions": [],
+  "capabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

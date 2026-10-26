@@ -1,0 +1,16 @@
+{
+  "name": "ZAID ASHIQ STUDIO",
+  "short_name": "ZAID STUDIO",
+  "description": "ZAID ASHIQ STUDIO - Full-Stack WhatsApp Multi-Feature Bot & Web Control Panel",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f0f4f8",
+  "theme_color": "#0284c7",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230284c7'/%3E%3Cpath d='M30 70 L50 30 L70 70 Z' fill='none' stroke='white' stroke-width='8'/%3E%3Ccircle cx='50' cy='52' r='6' fill='white'/%3E%3C/svg%3E",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}
